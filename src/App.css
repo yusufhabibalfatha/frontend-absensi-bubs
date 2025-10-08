@@ -1,0 +1,215 @@
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+h2 {
+  color: #34495e;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.component {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  justify-content: center;
+}
+
+.school-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  justify-content: center;
+}
+
+.day-button, .school-button, .subject-button {
+  padding: 12px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-height: auto;
+}
+
+.day-button {
+  background: #3498db;
+  color: white;
+}
+
+.day-button:hover {
+  background: #2980b9;
+}
+
+.day-button.selected {
+  background: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.school-button {
+  background: #9b59b6;
+  color: white;
+}
+
+.school-button:hover:not(.disabled) {
+  background: #8e44ad;
+}
+
+.school-button.selected {
+  background: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.school-button.disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.subject-button {
+  background: #27ae60;
+  color: white;
+  padding: 10px 8px;
+  font-size: 13px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.subject-button:hover {
+  background: #219a52;
+}
+
+.subject-button.selected {
+  background: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.selection-preview {
+  background: #e8f4fc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  border-left: 4px solid #3498db;
+  font-size: 14px;
+}
+
+.selection-preview h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.selection-preview p {
+  margin: 3px 0;
+  color: #34495e;
+}
+
+/* Layout untuk menampilkan semua komponen dalam satu layar */
+.components-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .button-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .subject-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .component {
+    padding: 15px;
+  }
+  
+  .day-button, .school-button, .subject-button {
+    padding: 10px 6px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .subject-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .app {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  justify-content: center;
+}
+
+.class-button {
+  background: #e67e22;
+  color: white;
+  padding: 12px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.class-button:hover {
+  background: #d35400;
+}
+
+.class-button.selected {
+  background: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
