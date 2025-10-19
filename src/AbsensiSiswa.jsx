@@ -73,6 +73,7 @@ const AbsensiSiswa = () => {
 
       const result = await response.json();
 
+      console.log('data kirim ', formData)
       console.log('response backend ', result)
 
       if (!response.ok) {
@@ -85,6 +86,23 @@ const AbsensiSiswa = () => {
     } finally {
       setSubmitLoading(false);
     }
+  };
+
+  const handleShare = () => {
+    const today = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    let message = `📅 Rekap Absensi Hari Ini - ${today}\n\n`;
+
+    formData.forEach((item, index) => {
+      message += `${index + 1}. ${item.nama_lengkap} - ${item.status}\n`;
+    });
+
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -120,6 +138,10 @@ const AbsensiSiswa = () => {
           </button>
         )}
       </form>
+
+      <button onClick={handleShare}>
+        📤 Bagikan ke WhatsApp
+      </button>
     </div>
   );
 };
