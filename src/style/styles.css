@@ -1,0 +1,362 @@
+/* styles.css */
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #3b82f6;
+  --accent-yellow: #fbbf24;
+  --accent-red: #ef4444;
+  --accent-green: #10b981;
+  --white: #ffffff;
+  --black: #000000;
+  --gray-light: #f3f4f6;
+  --gray-dark: #374151;
+  --shadow: 4px 4px 0px var(--black);
+  --shadow-sm: 2px 2px 0px var(--black);
+  --border: 3px solid var(--black);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+  min-height: 100vh;
+  color: var(--black);
+}
+
+/* Layout Styles */
+.beranda-layout,
+.pilih-layout,
+.absen-layout {
+  min-height: 100vh;
+  padding: 2rem;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(59, 130, 246, 0.05) 10px,
+    rgba(59, 130, 246, 0.05) 20px
+  );
+}
+
+/* Card Container */
+.card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--primary-blue), var(--accent-yellow), var(--accent-green), var(--accent-red));
+}
+
+/* Typography */
+h1 {
+  color: var(--primary-blue);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 0px var(--accent-yellow);
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  color: var(--gray-dark);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: var(--gray-dark);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Button Styles */
+.btn {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  margin: 0.5rem;
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--black);
+}
+
+.btn-primary {
+  background: var(--primary-blue);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+  background: var(--secondary-blue);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--black);
+}
+
+.btn-secondary {
+  background: var(--accent-yellow);
+  color: var(--black);
+  box-shadow: var(--shadow);
+}
+
+.btn-secondary:hover {
+  background: #f59e0b;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--black);
+}
+
+.btn-disabled {
+  background: var(--gray-light);
+  color: var(--gray-dark);
+  border-color: var(--gray-dark);
+  box-shadow: var(--shadow);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow);
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* School-themed decorative elements */
+.school-decoration {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.decoration-item {
+  font-size: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.decoration-item:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.decoration-item:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .button-group {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+/* Neo-brutalism additional touches */
+.neo-border {
+  border: 3px solid var(--black);
+}
+
+.neo-shadow {
+  box-shadow: 6px 6px 0px var(--black);
+}
+
+.neo-corner {
+  position: relative;
+}
+
+.neo-corner::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 100%;
+  height: 100%;
+  background: var(--accent-yellow);
+  border: 3px solid var(--black);
+  border-radius: 12px;
+  z-index: -1;
+}
+
+/* styles.css - Tambahkan bagian ini */
+
+/* Info Card Styles */
+.info-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-blue), var(--accent-green));
+  border-radius: 8px 0 0 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  background: var(--white);
+  border: 2px solid var(--gray-light);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  border-color: var(--primary-blue);
+  transform: translateX(4px);
+  background: #f0f9ff;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+  margin-right: 1rem;
+  width: 30px;
+  text-align: center;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--gray-dark);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.info-value {
+  font-weight: 700;
+  color: var(--black);
+  font-size: 1.1rem;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border: 2px solid var(--black);
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 2px 2px 0px var(--black);
+}
+
+.status-active {
+  background: var(--accent-green);
+  color: var(--white);
+}
+
+.status-inactive {
+  background: var(--accent-red);
+  color: var(--white);
+}
+
+/* Grid Layout untuk info */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.info-section {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.info-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--accent-yellow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Teacher Info Special Styling */
+.teacher-info {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+  border: 3px solid var(--accent-yellow);
+}
+
+.teacher-info .info-label {
+  color: #92400e;
+}
+
+.teacher-info .info-value {
+  color: #000;
+  font-weight: 800;
+}

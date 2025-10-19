@@ -25,8 +25,6 @@ const PilihMapel = () => {
         kelas: selectedClass
       };
       
-      console.log('Data yang akan dikirim:', dataAbsensi);
-      
       // Opsi 1: Jika menggunakan React Router
       navigate('/absen', { state: dataAbsensi });
     }
