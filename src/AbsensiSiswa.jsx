@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import './style/AbsensiSiswa.css'; // Import file CSS
 
 const AbsensiSiswa = () => {
-  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false); // loading submit
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-
   const [formData, setFormData] = useState([]);
-
-  const [inputKelas, setInputKelas] = useState('Kelas 7');
-  const [inputHari, setInputHari] = useState('Sabtu');
-  const [inputMapel, setInputMapel] = useState('Informatika');
+  const location = useLocation();
 
   const fetchData = async () => {
     setLoading(true);
@@ -19,20 +16,25 @@ const AbsensiSiswa = () => {
 
     try {
       const params = new URLSearchParams({
-        kelas: inputKelas,
-        hari: inputHari,
-        mapel: inputMapel,
+        kelas: location.state.kelas,
+        hari: location.state.hari,
+        mapel: location.state.mapel,
       });
 
       const response = await fetch(
         `http://absensi-bubs.local/wp-json/absensi-bubs/v1/jadwal-siswa?${params}`
       );
 
+      console.log('params ', params)
+      console.log('data absensi ', location.state)
+
       if (!response.ok) {
         throw new Error('Gagal mengambil data');
       }
 
       const result = await response.json();
+
+      console.log('result ', result)
       setFormData(result.data);
     } catch (err) {
       setError(err.message);
@@ -57,7 +59,7 @@ const AbsensiSiswa = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent reload
+    e.preventDefault();
     setSubmitLoading(true);
     setError(null);
     setSuccessMessage(null);
@@ -68,13 +70,10 @@ const AbsensiSiswa = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData), // Kirim seluruh formData
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
-
-      console.log('data kirim ', formData)
-      console.log('response backend ', result)
 
       if (!response.ok) {
         throw new Error(result.message || 'Gagal menyimpan absensi');
@@ -97,6 +96,8 @@ const AbsensiSiswa = () => {
 
     let message = `📅 Rekap Absensi Hari Ini - ${today}\n\n`;
 
+    console.log('data ke wa ', formData)
+
     formData.forEach((item, index) => {
       message += `${index + 1}. ${item.nama_lengkap} - ${item.status}\n`;
     });
@@ -106,42 +107,58 @@ const AbsensiSiswa = () => {
   };
 
   return (
-    <div>
-      <h1>Sistem Absensi Siswa</h1>
+    <div className="absensi-container">
+      <h1 className="absensi-header">Sistem Absensi Siswa</h1>
 
-      {loading && <p>Sedang memuat data...</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+      {loading && <p className="loading-text loading-pulse">Sedang memuat data...</p>}
+      {error && <p className="error-message">Error: {error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
 
       <form onSubmit={handleSubmit}>
         {formData && formData.map((siswa) => (
-          <div key={siswa.id_siswa} style={{ marginBottom: '1rem' }}>
-            <p>{siswa.nama_lengkap}</p>
-            {['Hadir', 'Izin', 'Sakit', 'Alpa'].map((statusOption) => (
-              <label key={statusOption} style={{ marginRight: '10px' }}>
-                <input
-                  type="radio"
-                  name={`status-${siswa.id_siswa}`}
-                  value={statusOption}
-                  checked={siswa.status === statusOption}
-                  onChange={(e) => handleStatusChange(siswa.id_siswa, e.target.value)}
-                />
-                {statusOption}
-              </label>
-            ))}
+          <div key={siswa.id_siswa} className="siswa-card">
+            <p className="siswa-nama">{siswa.nama_lengkap}</p>
+            <div className="status-options">
+              {['Hadir', 'Izin', 'Sakit', 'Alpa'].map((statusOption) => (
+                <label 
+                  key={statusOption} 
+                  className={`status-option status-${statusOption.toLowerCase()}`}
+                >
+                  <input
+                    type="radio"
+                    name={`status-${siswa.id_siswa}`}
+                    value={statusOption}
+                    checked={siswa.status === statusOption}
+                    onChange={(e) => handleStatusChange(siswa.id_siswa, e.target.value)}
+                    className="status-radio"
+                  />
+                  {statusOption}
+                </label>
+              ))}
+            </div>
           </div>
         ))}
 
         {formData.length > 0 && (
-          <button type="submit" disabled={submitLoading}>
-            {submitLoading ? 'Menyimpan...' : 'Simpan Absensi'}
-          </button>
+          <div className="form-actions">
+            <button 
+              type="submit" 
+              disabled={submitLoading}
+              className="submit-button"
+            >
+              {submitLoading ? 'Menyimpan...' : 'Simpan Absensi'}
+            </button>
+            
+            <button 
+              type="button" 
+              onClick={handleShare}
+              className="share-button"
+            >
+              📤 Bagikan ke WhatsApp
+            </button>
+          </div>
         )}
       </form>
-
-      <button onClick={handleShare}>
-        📤 Bagikan ke WhatsApp
-      </button>
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Jika menggunakan React Router
 import './App.css';
 import { jadwalSMP, jadwalSMA } from './data/jadwal';
 
@@ -8,12 +9,28 @@ const PilihMapel = () => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null); // NEW STATE
 
+  const navigate = useNavigate(); // Jika menggunakan React Router
+
   const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   const schools = ['SMP', 'SMA'];
 
+  // Fungsi untuk pindah halaman
   const pindahHalaman = () => {
-    
-  }
+    // Pastikan semua data sudah terisi
+    if (selectedDay && selectedSchool && selectedSubject && selectedClass) {
+      const dataAbsensi = {
+        hari: selectedDay,
+        sekolah: selectedSchool,
+        mapel: selectedSubject,
+        kelas: selectedClass
+      };
+      
+      console.log('Data yang akan dikirim:', dataAbsensi);
+      
+      // Opsi 1: Jika menggunakan React Router
+      navigate('/absen', { state: dataAbsensi });
+    }
+  };
 
   const getSubjects = () => {
     if (!selectedDay || !selectedSchool) return [];
@@ -183,7 +200,7 @@ const PilihMapel = () => {
         )}
 
         {/* Preview Data yang Dipilih */}
-        {(selectedDay || selectedSchool || selectedSubject || selectedClass) && (
+        {/* {(selectedDay || selectedSchool || selectedSubject || selectedClass) && (
           <div className="selection-preview">
             <h3>✅ Data yang Dipilih:</h3>
             <p><strong>Hari:</strong> {selectedDay || '-'}</p>
@@ -194,6 +211,32 @@ const PilihMapel = () => {
               <p onClick={pindahHalaman} style={{ marginTop: '10px', fontStyle: 'italic', color: '#27ae60' }}>
                 Klik untuk lanjut ke halaman absensi...
               </p>
+            )}
+          </div>
+        )} */}
+
+        {/* Preview Data yang Dipilih */}
+        {(selectedDay || selectedSchool || selectedSubject || selectedClass) && (
+          <div className="selection-preview">
+            <h3>✅ Data yang Dipilih:</h3>
+            <p><strong>Hari:</strong> {selectedDay || '-'}</p>
+            <p><strong>Sekolah:</strong> {selectedSchool || '-'}</p>
+            <p><strong>Mata Pelajaran:</strong> {selectedSubject || '-'}</p>
+            <p><strong>Kelas:</strong> {selectedClass ? selectedClass.replace('_', ' ') : '-'}</p>
+            
+            {/* Tombol Pindah Halaman - hanya muncul jika semua data lengkap */}
+            {selectedDay && selectedSchool && selectedSubject && selectedClass && (
+              <div className="navigation-section">
+                <button 
+                  className="navigation-button"
+                  onClick={pindahHalaman}
+                >
+                  📋 Lanjut ke Absensi
+                </button>
+                <p style={{ textAlign: 'center', fontStyle: 'italic', color: '#666', marginTop: '5px' }}>
+                  Klik untuk melanjutkan ke halaman absensi
+                </p>
+              </div>
             )}
           </div>
         )}

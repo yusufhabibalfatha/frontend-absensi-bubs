@@ -1,5 +1,5 @@
 export const jadwalSMA = {
-  "kelas_X": {
+  "Kelas 10": {
     "Senin": ["Bahasa Inggris", "Biologi"],
     "Selasa": ["Kimia", "Sosiologi", "Agama Islam"],
     "Rabu": ["Matematika", "Bahasa Indonesia", "Sejarah"],
@@ -7,7 +7,7 @@ export const jadwalSMA = {
     "Jumat": ["PJOK", "SBD", "Bahasa Indonesia"],
     "Sabtu": ["Fisika", "TIK", "Ekonomi"]
   },
-  "kelas_XI": {
+  "Kelas 11": {
     "Senin": ["Agama Islam", "Fisika"],
     "Selasa": ["SBD", "PKN", "Matematika"],
     "Rabu": ["PJOK", "29 Karakter", "Biologi"],
@@ -15,7 +15,7 @@ export const jadwalSMA = {
     "Jumat": ["Sosiologi", "Bahasa Inggris"],
     "Sabtu": ["Sejarah", "Bahasa Indonesia", "TIK"]
   },
-  "kelas_XII": {
+  "Kelas 12": {
     "Senin": ["Biologi", "TIK"],
     "Selasa": ["PJOK", "Bahasa Indonesia", "Ekonomi"],
     "Rabu": ["29 Karakter", "SBD", "Matematika"],
@@ -27,7 +27,7 @@ export const jadwalSMA = {
 
 
 export const jadwalSMP = {
-    "kelas_VII": {
+    "Kelas 7": {
       "Senin": ["Matematika", "PKN"],
       "Selasa": ["IPS", "Bahasa Indonesia", "Seni Rupa"],
       "Rabu": ["Prakarya", "Bahasa Inggris", "IPA"],
@@ -35,7 +35,7 @@ export const jadwalSMP = {
       "Jumat": ["29 Karakter", "IPS", "IPA"],
       "Sabtu": ["PJOK", "TIK", "Bahasa Indonesia"]
     },
-    "kelas_VIII": {
+    "Kelas 8": {
       "Senin": ["Bahasa Indonesia", "Matematika"],
       "Selasa": ["Bahasa Indonesia", "IPS", "PKN"],
       "Rabu": ["IPA", "Matematika", "Seni Rupa"],
@@ -43,7 +43,7 @@ export const jadwalSMP = {
       "Jumat": ["PJOK", "Bahasa Inggris", "IPS"],
       "Sabtu": ["29 Karakter", "Agama Islam", "IPA"]
     },
-    "kelas_IX": {
+    "Kelas 9": {
       "Senin": ["IPA", "Seni Rupa"],
       "Selasa": ["PJOK", "Matematika", "Bahasa Indonesia"],
       "Rabu": ["PKN", "IPS", "Prakarya"],
