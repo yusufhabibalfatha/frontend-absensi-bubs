@@ -1,167 +1,24 @@
-.absensi-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
-
-.absensi-header {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #3498db;
-}
-
-.loading-text {
-  text-align: center;
-  color: #7f8c8d;
-  font-style: italic;
-  padding: 20px;
-}
-
-.error-message {
-  background-color: #e74c3c;
-  color: white;
-  padding: 12px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.success-message {
-  background-color: #27ae60;
-  color: white;
-  padding: 12px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.siswa-card {
-  background: white;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #3498db;
-}
-
-.siswa-nama {
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 15px;
-  font-size: 1.1em;
-}
-
-.status-options {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.status-option {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.status-radio {
-  margin-right: 8px;
-  transform: scale(1.1);
-}
-
-.status-hadir { color: #27ae60; }
-.status-izin { color: #f39c12; }
-.status-sakit { color: #e67e22; }
-.status-alpa { color: #e74c3c; }
-
-.form-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  margin-top: 30px;
-  flex-wrap: wrap;
-}
-
-.submit-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s;
-}
-
-.submit-button:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-.submit-button:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-.share-button {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s;
-}
-
-.share-button:hover {
-  background-color: #219a52;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .absensi-container {
-    padding: 15px;
-  }
-  
-  .status-options {
-    gap: 10px;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .submit-button,
-  .share-button {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-/* Animation for loading state */
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-.loading-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-
-
-/* ========================== */
 /* style/AbsensiSiswa.css */
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #3b82f6;
+  --accent-yellow: #fbbf24;
+  --accent-red: #ef4444;
+  --accent-green: #10b981;
+  --white: #ffffff;
+  --black: #000000;
+  --gray-light: #f3f4f6;
+  --gray-dark: #374151;
+  --shadow: 4px 4px 0px var(--black);
+  --shadow-sm: 2px 2px 0px var(--black);
+  --border: 3px solid var(--black);
+}
+
 .absensi-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 1rem;
+  scroll-margin-top: 0;
 }
 
 .absensi-header {
@@ -224,6 +81,108 @@
   color: var(--white);
 }
 
+/* Info Card Styles */
+.info-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.info-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-blue), var(--accent-green));
+  border-radius: 8px 0 0 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  background: var(--white);
+  border: 2px solid var(--gray-light);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  border-color: var(--primary-blue);
+  transform: translateX(4px);
+  background: #f0f9ff;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+  margin-right: 1rem;
+  width: 30px;
+  text-align: center;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--gray-dark);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.info-value {
+  font-weight: 700;
+  color: var(--black);
+  font-size: 1.1rem;
+}
+
+/* Teacher Info Special Styling */
+.teacher-info {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+  border: 3px solid var(--accent-yellow);
+}
+
+.teacher-info .info-label {
+  color: #92400e;
+}
+
+.teacher-info .info-value {
+  color: #000;
+  font-weight: 800;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border: 2px solid var(--black);
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 2px 2px 0px var(--black);
+}
+
+.status-active {
+  background: var(--accent-green);
+  color: var(--white);
+}
+
 /* Loading States */
 .loading-text {
   text-align: center;
@@ -238,8 +197,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Message Styles */
@@ -267,7 +231,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Siswa Card Styles */
+/* Siswa Card dengan Background Status */
 .siswa-card {
   background: var(--white);
   border: var(--border);
@@ -279,12 +243,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.siswa-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--gray-light);
+  transition: all 0.3s ease;
 }
 
 .siswa-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
-  border-color: var(--primary-blue);
 }
 
 .siswa-nama {
@@ -293,6 +269,106 @@
   color: var(--black);
   margin: 0;
   flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+/* Background colors berdasarkan status */
+.siswa-card[data-status="Hadir"] {
+  border-color: #10b981;
+}
+
+.siswa-card[data-status="Hadir"]::before {
+  background: #10b981;
+}
+
+.siswa-card[data-status="Hadir"] .siswa-nama {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid #10b981;
+  font-weight: 800;
+}
+
+.siswa-card[data-status="Izin"] {
+  border-color: #f59e0b;
+}
+
+.siswa-card[data-status="Izin"]::before {
+  background: #f59e0b;
+}
+
+.siswa-card[data-status="Izin"] .siswa-nama {
+  background: #fef3c7;
+  color: #92400e;
+  border: 2px solid #f59e0b;
+  font-weight: 800;
+}
+
+.siswa-card[data-status="Sakit"] {
+  border-color: #ef4444;
+}
+
+.siswa-card[data-status="Sakit"]::before {
+  background: #ef4444;
+}
+
+.siswa-card[data-status="Sakit"] .siswa-nama {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #ef4444;
+  font-weight: 800;
+}
+
+.siswa-card[data-status="Alpa"] {
+  border-color: #6b7280;
+}
+
+.siswa-card[data-status="Alpa"]::before {
+  background: #6b7280;
+}
+
+.siswa-card[data-status="Alpa"] .siswa-nama {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #6b7280;
+  font-weight: 800;
+}
+
+/* Status badge di nama */
+.siswa-nama::after {
+  content: "";
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  background: var(--white);
+}
+
+.siswa-card[data-status="Hadir"] .siswa-nama::after {
+  content: "HADIR";
+  background: #10b981;
+  color: white;
+}
+
+.siswa-card[data-status="Izin"] .siswa-nama::after {
+  content: "IZIN";
+  background: #f59e0b;
+  color: white;
+}
+
+.siswa-card[data-status="Sakit"] .siswa-nama::after {
+  content: "SAKIT";
+  background: #ef4444;
+  color: white;
+}
+
+.siswa-card[data-status="Alpa"] .siswa-nama::after {
+  content: "ALPA";
+  background: #6b7280;
+  color: white;
 }
 
 /* Status Options */
@@ -313,70 +389,81 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
+  background: var(--white);
 }
 
 .status-radio {
   display: none;
 }
 
-/* Status Colors */
+/* Status Colors untuk Options */
 .status-hadir {
-  background: #d1fae5;
   color: #065f46;
+  border-color: #065f46;
 }
 
 .status-izin {
-  background: #fef3c7;
   color: #92400e;
+  border-color: #92400e;
 }
 
 .status-sakit {
-  background: #fee2e2;
   color: #991b1b;
+  border-color: #991b1b;
 }
 
 .status-alpa {
-  background: #f3f4f6;
   color: #374151;
+  border-color: #374151;
 }
 
-/* Selected State */
-.status-option input:checked + .status-option,
-.status-radio:checked + .status-option {
-  transform: scale(1.05);
-  box-shadow: 2px 2px 0px var(--black);
-  font-weight: 800;
-}
-
-.status-hadir .status-radio:checked + .status-option {
-  background: #10b981;
-  color: white;
-}
-
-.status-izin .status-radio:checked + .status-option {
-  background: #f59e0b;
-  color: white;
-}
-
-.status-sakit .status-radio:checked + .status-option {
-  background: #ef4444;
-  color: white;
-}
-
-.status-alpa .status-radio:checked + .status-option {
-  background: #6b7280;
-  color: white;
-}
-
-/* Fix for radio selection */
-.status-option input[type="radio"]:checked {
-  background: var(--primary-blue);
-}
-
+/* Selected State untuk Options */
 .status-option:has(.status-radio:checked) {
   transform: scale(1.05);
   box-shadow: 2px 2px 0px var(--black);
   font-weight: 800;
+  color: white;
+}
+
+.status-hadir:has(.status-radio:checked) {
+  background: #10b981;
+  border-color: #065f46;
+}
+
+.status-izin:has(.status-radio:checked) {
+  background: #f59e0b;
+  border-color: #92400e;
+}
+
+.status-sakit:has(.status-radio:checked) {
+  background: #ef4444;
+  border-color: #991b1b;
+}
+
+.status-alpa:has(.status-radio:checked) {
+  background: #6b7280;
+  border-color: #374151;
+}
+
+/* Hover effects untuk options */
+.status-option:hover {
+  transform: translateY(-1px);
+}
+
+.status-hadir:hover {
+  background: #d1fae5;
+}
+
+.status-izin:hover {
+  background: #fef3c7;
+}
+
+.status-sakit:hover {
+  background: #fee2e2;
+}
+
+.status-alpa:hover {
+  background: #f3f4f6;
 }
 
 /* Form Actions */
@@ -390,7 +477,8 @@
   flex-wrap: wrap;
 }
 
-.submit-button, .share-button {
+.submit-button,
+.share-button {
   padding: 1rem 2rem;
   font-size: 1.1rem;
   font-weight: 700;
@@ -466,50 +554,69 @@
   box-shadow: 4px 4px 0px var(--black);
 }
 
+/* Animation untuk perubahan status */
+@keyframes statusChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.siswa-card[data-status]:not([data-status=""]) {
+  animation: statusChange 0.3s ease;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .absensi-container {
     padding: 0.5rem;
   }
-  
+
   .absensi-header {
     font-size: 2rem;
   }
-  
+
   .siswa-card {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
+  .siswa-nama {
+    width: 100%;
+    text-align: center;
+  }
+
   .status-options {
     justify-content: center;
+    width: 100%;
   }
-  
+
   .form-actions {
     flex-direction: column;
     align-items: center;
   }
-  
-  .submit-button, .share-button {
+
+  .submit-button,
+  .share-button {
     width: 100%;
     max-width: 300px;
   }
-  
+
   .navigation-controls {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .nav-button {
     width: 100%;
     justify-content: center;
   }
-}
-
-/* Scroll to top fix */
-.absensi-container {
-  scroll-margin-top: 0;
 }
 
 html {
