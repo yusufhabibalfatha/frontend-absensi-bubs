@@ -96,7 +96,7 @@ const AbsensiSiswa = () => {
 
       setSuccessMessage('Absensi berhasil disimpan!');
       handleShare();
-      navigate('/')
+      // navigate('/')
     } catch (err) {
       setError(err.message);
     } finally {
@@ -105,77 +105,79 @@ const AbsensiSiswa = () => {
   };
 
   const handleShare = () => {
-    const dataTambahan = {
-      guruMapel: guru,
-      kelas: location.state.kelas,
-      hari: location.state.hari,
-      mapel: location.state.mapel,
-    };
+      const dataTambahan = {
+        guruMapel: guru,
+        kelas: location.state.kelas,
+        hari: location.state.hari,
+        mapel: location.state.mapel,
+      };
 
-    const today = new Date();
-    const tanggalLengkap = today.toLocaleDateString('id-ID', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+      const today = new Date();
+      const tanggalLengkap = today.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
 
-    const groups = {
-      Hadir: [],
-      Izin: [],
-      Sakit: [],
-      Alpa: [],
-    };
+      const groups = {
+        Hadir: [],
+        Izin: [],
+        Sakit: [],
+        Alpa: [],
+      };
 
-    formData.forEach((item) => {
-      const status = item.status || "Lainnya";
-      if (groups[status]) {
-        groups[status].push(item.nama_lengkap);
-      }
-    });
-
-    let message = `📅 *Rekap Absensi Siswa ${dataTambahan.kelas}*\n`;
-    message += `*Tanggal:* ${tanggalLengkap}\n`;
-
-    if (dataTambahan.guruMapel) {
-      message += `*Guru Mapel:* ${dataTambahan.guruMapel}\n`;
-    }
-    if (dataTambahan.mapel) {
-      message += `*Mapel:* ${dataTambahan.mapel}\n`;
-    }
-
-    message += `\n`;
-
-    const order = ['Hadir', 'Izin', 'Sakit', 'Alpa'];
-    order.forEach((kategori) => {
-      const list = groups[kategori];
-      if (list.length > 0) {
-        let emoji = '📋';
-        switch (kategori) {
-          case 'Hadir': emoji = '✅'; break;
-          case 'Izin': emoji = '📋'; break;
-          case 'Sakit': emoji = '🤒'; break;
-          case 'Alpa': emoji = '❌'; break;
+      formData.forEach((item) => {
+        const status = item.status || "Lainnya";
+        if (groups[status]) {
+          groups[status].push(item.nama_lengkap);
         }
+      });
 
-        message += `${emoji} *${kategori}*\n`;
-        list.forEach((nama) => {
-          message += `- ${nama}\n`;
-        });
-        message += `\n`;
+      let message = `📅 *Rekap Absensi Siswa ${dataTambahan.kelas}*\n`;
+      message += `*Tanggal:* ${tanggalLengkap}\n`;
+
+      if (dataTambahan.guruMapel) {
+        message += `*Guru Mapel:* ${dataTambahan.guruMapel}\n`;
       }
-    });
+      if (dataTambahan.mapel) {
+        message += `*Mapel:* ${dataTambahan.mapel}\n`;
+      }
 
-    const summary = order.map(kategori => {
-      const count = groups[kategori].length;
-      return `${kategori}: ${count}`;
-    }).join(' | ');
+      message += `\n`;
 
-    message += `📊 *Ringkasan:*\n${summary}`;
+      const order = ['Hadir', 'Izin', 'Sakit', 'Alpa'];
+      order.forEach((kategori) => {
+        const list = groups[kategori];
+        if (list.length > 0) {
+          let emoji = '📋';
+          switch (kategori) {
+            case 'Hadir': emoji = '✅'; break;
+            case 'Izin': emoji = '📋'; break;
+            case 'Sakit': emoji = '🤒'; break;
+            case 'Alpa': emoji = '❌'; break;
+          }
 
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
+          message += `${emoji} *${kategori}*\n`;
+          list.forEach((nama) => {
+            message += `- ${nama}\n`;
+          });
+          message += `\n`;
+        }
+      });
+
+      const summary = order.map(kategori => {
+        const count = groups[kategori].length;
+        return `${kategori}: ${count}`;
+      }).join(' | ');
+
+      message += `📊 *Ringkasan:*\n${summary}`;
+
+      // ✅ Ganti URL WhatsApp & gunakan redirect langsung
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+      window.location.href = whatsappUrl;
+    };
+
 
   const handleBack = () => {
     navigate(-1); // Kembali ke halaman sebelumnya
