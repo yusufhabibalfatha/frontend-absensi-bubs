@@ -622,3 +622,136 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* QR Scanner Styles */
+.qr-scanner-modal {
+  font-family: "Inter", "Arial Rounded MT Bold", "Arial", sans-serif;
+}
+
+/* Animation for scanner modal */
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.qr-scanner-container {
+  animation: modalAppear 0.3s ease-out;
+}
+
+/* Scanner success flash */
+@keyframes scanSuccess {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(16, 185, 129, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.scan-success {
+  animation: scanSuccess 0.5s ease;
+}
+
+/* Tambahkan di bagian akhir file CSS */
+
+/* Tombol Batalkan Status */
+.siswa-card .cancel-button {
+  background: #ef4444;
+  color: white;
+  border: 2px solid #000;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 1px 1px 0px #000;
+  font-size: 0.7rem;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.siswa-card .cancel-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px #000;
+}
+
+.siswa-card .cancel-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+/* Responsive untuk tombol batalkan */
+@media (max-width: 768px) {
+  .siswa-card .cancel-button {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* Keterangan Styles */
+.keterangan-badge {
+  transition: all 0.2s ease;
+}
+
+.keterangan-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 1px 1px 0px #0369a1;
+}
+
+.keterangan-button {
+  transition: all 0.2s ease;
+}
+
+.keterangan-button:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+  transform: scale(1.1);
+}
+
+/* Responsive untuk keterangan */
+@media (max-width: 768px) {
+  .siswa-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .siswa-card > div:first-child {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .status-options {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .keterangan-badge {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+  }
+}
+
+/* Animation for keterangan modal */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.keterangan-modal .keterangan-editor {
+  animation: modalSlideIn 0.3s ease-out;
+}
