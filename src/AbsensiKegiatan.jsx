@@ -1,53 +1,67 @@
+// AbsensiKegiatan.jsx
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRScanner from "./components/QRScanner";
 import "./style/AbsensiSiswa.css";
 
-const AbsensiSiswa = () => {
+const AbsensiKegiatan = () => {
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [formData, setFormData] = useState([]);
-  const [guru, setGuru] = useState(null);
   const [scanMessage, setScanMessage] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [editingKeterangan, setEditingKeterangan] = useState(null); // { id_siswa: null, status: null }
+  const [editingKeterangan, setEditingKeterangan] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef(null);
 
-  // Scroll to top when component mounts or data loads
+  const { kegiatan, kelas, kamar, tipe } = location.state || {};
+
   useEffect(() => {
+    if (!kegiatan || !tipe) {
+      navigate("/kegiatan");
+      return;
+    }
     window.scrollTo(0, 0);
-  }, []);
+    fetchData();
+  }, [kegiatan, tipe, navigate]);
 
   const fetchData = async () => {
+    if (!kegiatan) return;
+
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     setScanMessage(null);
 
     try {
-      const params = new URLSearchParams({
-        kelas: location.state.kelas,
-        hari: location.state.hari,
-        mapel: location.state.mapel,
-      });
-
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/jadwal-siswa?${params}`;
+      }/absensi-bubs/v1/siswa-kegiatan?`;
+
+      if (tipe === "SEKOLAH" && kelas) {
+        url += `kegiatan=${kegiatan.id}&kelas=${kelas.id}`;
+      } else if (tipe === "PONDOK" && kamar) {
+        url += `kegiatan=${kegiatan.id}&kamar=${kamar.id}`;
+      } else {
+        throw new Error("Data tidak lengkap");
+      }
 
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error("Gagal mengambil data");
+        throw new Error("Gagal mengambil data siswa");
       }
 
       const result = await response.json();
-      setFormData(result.data);
-      setGuru(result.kriteria.guru);
+
+      if (result.success) {
+        setFormData(result.data);
+      } else {
+        throw new Error(result.message || "Data siswa tidak ditemukan");
+      }
 
       window.scrollTo(0, 0);
     } catch (err) {
@@ -57,17 +71,12 @@ const AbsensiSiswa = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const handleStatusChange = (id_siswa, newStatus) => {
     const updatedData = formData.map((item) => {
       if (item.id_siswa === id_siswa) {
         return {
           ...item,
           status: newStatus,
-          // Reset keterangan ketika status berubah, kecuali jika status sama
           keterangan: item.status === newStatus ? item.keterangan : null,
         };
       }
@@ -77,7 +86,6 @@ const AbsensiSiswa = () => {
     setScanMessage(null);
   };
 
-  // Batalkan status (set menjadi null)
   const handleCancelStatus = (id_siswa, nama_siswa) => {
     const updatedData = formData.map((item) => {
       if (item.id_siswa === id_siswa) {
@@ -93,15 +101,10 @@ const AbsensiSiswa = () => {
     }, 3000);
   };
 
-  // Handle QR Scan Result
   const handleQRScan = (nik) => {
-    console.log("Scanning NIK:", nik);
-
-    // Find student by NIK
     const student = formData.find((item) => item.nik === nik);
 
     if (student) {
-      // Update status to "Hadir"
       const updatedData = formData.map((item) => {
         if (item.nik === nik) {
           return { ...item, status: "Hadir", keterangan: null };
@@ -116,7 +119,7 @@ const AbsensiSiswa = () => {
         setScanMessage(null);
       }, 3000);
     } else {
-      setScanMessage("❌ Siswa tidak ditemukan dalam kelas ini");
+      setScanMessage("❌ Siswa tidak ditemukan");
 
       setTimeout(() => {
         setScanMessage(null);
@@ -126,7 +129,6 @@ const AbsensiSiswa = () => {
 
   const handleScanError = (errorMessage) => {
     setScanMessage(errorMessage);
-
     setTimeout(() => {
       setScanMessage(null);
     }, 3000);
@@ -141,7 +143,6 @@ const AbsensiSiswa = () => {
     setIsScannerOpen(false);
   };
 
-  // Handle keterangan change
   const handleKeteranganChange = (id_siswa, keterangan) => {
     const updatedData = formData.map((item) => {
       if (item.id_siswa === id_siswa) {
@@ -152,7 +153,6 @@ const AbsensiSiswa = () => {
     setFormData(updatedData);
   };
 
-  // Open keterangan editor
   const openKeteranganEditor = (id_siswa, status, currentKeterangan) => {
     setEditingKeterangan({
       id_siswa,
@@ -161,12 +161,10 @@ const AbsensiSiswa = () => {
     });
   };
 
-  // Close keterangan editor
   const closeKeteranganEditor = () => {
     setEditingKeterangan(null);
   };
 
-  // Save keterangan
   const saveKeterangan = () => {
     if (editingKeterangan) {
       handleKeteranganChange(
@@ -185,16 +183,32 @@ const AbsensiSiswa = () => {
     setScanMessage(null);
 
     try {
+      // Prepare data for submission
+      const submissionData = formData
+        .filter((item) => item.status) // Only include students with status
+        .map((item) => ({
+          id_siswa: item.id_siswa,
+          id_kegiatan: item.id_kegiatan,
+          id_kelas: tipe === "SEKOLAH" ? item.id_kelas : null,
+          id_kamar: tipe === "PONDOK" ? item.id_kamar : null,
+          status: item.status,
+          keterangan: item.keterangan || "",
+        }));
+
+      if (submissionData.length === 0) {
+        throw new Error("Tidak ada data absensi yang akan disimpan");
+      }
+
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/insert/absensi-sekolah`;
+      }/absensi-bubs/insert/absensi-kegiatan`;
 
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       const result = await response.json();
@@ -203,23 +217,16 @@ const AbsensiSiswa = () => {
         throw new Error(result.message || "Gagal menyimpan absensi");
       }
 
-      setSuccessMessage("Absensi berhasil disimpan!");
+      setSuccessMessage("Absensi kegiatan berhasil disimpan!");
+      handleShare();
     } catch (err) {
       setError(err.message);
     } finally {
       setSubmitLoading(false);
     }
-    handleShare();
   };
 
   const handleShare = () => {
-    const dataTambahan = {
-      guruMapel: guru,
-      kelas: location.state.kelas,
-      hari: location.state.hari,
-      mapel: location.state.mapel,
-    };
-
     const today = new Date();
     const tanggalLengkap = today.toLocaleDateString("id-ID", {
       weekday: "long",
@@ -245,14 +252,13 @@ const AbsensiSiswa = () => {
       }
     });
 
-    let message = `📅 *Rekap Absensi Siswa ${dataTambahan.kelas}*\n`;
+    let message = `📅 *Rekap Absensi ${kegiatan.nama_kegiatan}*\n`;
     message += `*Tanggal:* ${tanggalLengkap}\n`;
 
-    if (dataTambahan.guruMapel) {
-      message += `*Guru Mapel:* ${dataTambahan.guruMapel}\n`;
-    }
-    if (dataTambahan.mapel) {
-      message += `*Mapel:* ${dataTambahan.mapel}\n`;
+    if (tipe === "SEKOLAH" && kelas) {
+      message += `*Kelas:* ${kelas.nama_kelas}\n`;
+    } else if (tipe === "PONDOK" && kamar) {
+      message += `*Kamar:* ${kamar.nama_kamar}\n`;
     }
 
     message += `\n`;
@@ -292,7 +298,6 @@ const AbsensiSiswa = () => {
       }
     });
 
-    // Hitung siswa tanpa status
     const siswaTanpaStatus = formData.filter((item) => !item.status).length;
 
     if (siswaTanpaStatus > 0) {
@@ -312,19 +317,21 @@ const AbsensiSiswa = () => {
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
       message
     )}`;
-    window.location.href = whatsappUrl;
-    // window.open(whatsappUrl, "_blank");
+    window.open(whatsappUrl, "_blank");
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (tipe === "SEKOLAH") {
+      navigate("/kegiatan/kelas");
+    } else {
+      navigate("/kegiatan/kamar");
+    }
   };
 
   const handleRetry = () => {
     fetchData();
   };
 
-  // Hitung statistik
   const getStats = () => {
     const hadir = formData.filter((item) => item.status === "Hadir").length;
     const izin = formData.filter((item) => item.status === "Izin").length;
@@ -336,6 +343,21 @@ const AbsensiSiswa = () => {
   };
 
   const stats = getStats();
+
+  if (!kegiatan || !tipe) {
+    return (
+      <div className="absensi-container">
+        <div className="error-message">❌ Data tidak lengkap</div>
+        <button
+          onClick={() => navigate("/kegiatan")}
+          className="nav-button btn-back"
+          style={{ marginTop: "1rem", width: "100%", justifyContent: "center" }}
+        >
+          ← Kembali ke Pilih Kegiatan
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="absensi-container" ref={containerRef}>
@@ -479,8 +501,10 @@ const AbsensiSiswa = () => {
         >
           ← Kembali
         </button>
-        <h1 className="absensi-header">📋 Absensi Siswa</h1>
-        <div style={{ width: "100px" }}></div> {/* Spacer untuk balance */}
+
+        <h1 className="absensi-header">📋 Absensi {kegiatan.nama_kegiatan}</h1>
+
+        <div style={{ width: "100px" }}></div>
       </div>
 
       {/* Info Card */}
@@ -488,32 +512,48 @@ const AbsensiSiswa = () => {
         <div className="info-item">
           <div className="info-icon">📅</div>
           <div className="info-content">
-            <div className="info-label">Hari</div>
-            <div className="info-value">{location.state?.hari || "-"}</div>
+            <div className="info-label">Kegiatan</div>
+            <div className="info-value">{kegiatan.nama_kegiatan}</div>
           </div>
         </div>
 
         <div className="info-item">
-          <div className="info-icon">📚</div>
+          <div className="info-icon">⏰</div>
           <div className="info-content">
-            <div className="info-label">Mata Pelajaran</div>
-            <div className="info-value">{location.state?.mapel || "-"}</div>
+            <div className="info-label">Waktu</div>
+            <div className="info-value">{kegiatan.waktu_pelaksanaan}</div>
           </div>
         </div>
 
-        <div className="info-item">
-          <div className="info-icon">🏫</div>
-          <div className="info-content">
-            <div className="info-label">Kelas</div>
-            <div className="info-value">{location.state?.kelas || "-"}</div>
+        {tipe === "SEKOLAH" && kelas && (
+          <div className="info-item">
+            <div className="info-icon">🏫</div>
+            <div className="info-content">
+              <div className="info-label">Kelas</div>
+              <div className="info-value">{kelas.nama_kelas}</div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {tipe === "PONDOK" && kamar && (
+          <div className="info-item">
+            <div className="info-icon">🏠</div>
+            <div className="info-content">
+              <div className="info-label">Kamar</div>
+              <div className="info-value">{kamar.nama_kamar}</div>
+            </div>
+          </div>
+        )}
 
         <div className="info-item teacher-info">
-          <div className="info-icon">👨‍🏫</div>
+          <div className="info-icon">👥</div>
           <div className="info-content">
-            <div className="info-label">Guru Pengajar</div>
-            <div className="info-value">{guru || "Loading..."}</div>
+            <div className="info-label">Jenis</div>
+            <div className="info-value">
+              {tipe === "SEKOLAH"
+                ? "Siswa Boarding"
+                : "Siswa Boarding & Reguler"}
+            </div>
           </div>
           <span className="status-badge status-active">Active</span>
         </div>
@@ -869,4 +909,4 @@ const getKeteranganContoh = (status) => {
   }
 };
 
-export default AbsensiSiswa;
+export default AbsensiKegiatan;

@@ -21,7 +21,7 @@
 }
 
 body {
-  font-family: 'Inter', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  font-family: "Inter", "Arial Rounded MT Bold", "Arial", sans-serif;
   background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
   min-height: 100vh;
   color: var(--black);
@@ -56,13 +56,19 @@ body {
 }
 
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 8px;
-  background: linear-gradient(90deg, var(--primary-blue), var(--accent-yellow), var(--accent-green), var(--accent-red));
+  background: linear-gradient(
+    90deg,
+    var(--primary-blue),
+    var(--accent-yellow),
+    var(--accent-green),
+    var(--accent-red)
+  );
 }
 
 /* Typography */
@@ -182,8 +188,13 @@ p {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Responsive Design */
@@ -192,7 +203,7 @@ p {
     flex-direction: row;
     justify-content: center;
   }
-  
+
   h1 {
     font-size: 3rem;
   }
@@ -212,7 +223,7 @@ p {
 }
 
 .neo-corner::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   right: -8px;
@@ -239,7 +250,7 @@ p {
 }
 
 .info-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -359,4 +370,160 @@ p {
 .teacher-info .info-value {
   color: #000;
   font-weight: 800;
+}
+
+/* Tambahkan di styles.css */
+
+/* Kegiatan Grid */
+.kegiatan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.kegiatan-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.kegiatan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary-blue);
+}
+
+.kegiatan-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.kegiatan-content {
+  flex: 1;
+}
+
+.kegiatan-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--black);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.kegiatan-content p {
+  margin: 0 0 0.5rem 0;
+  color: var(--gray-dark);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.kegiatan-content small {
+  color: var(--gray-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.kegiatan-arrow {
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  font-weight: 800;
+}
+
+/* Kelas & Kamar Grid */
+.kelas-grid,
+.kamar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.kelas-card,
+.kamar-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.kelas-card:hover,
+.kamar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary-blue);
+}
+
+.kelas-icon,
+.kamar-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.kelas-content h3,
+.kamar-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.kelas-content p,
+.kamar-content p {
+  margin: 0 0 0.3rem 0;
+  color: var(--gray-dark);
+  font-size: 0.9rem;
+}
+
+.kelas-arrow,
+.kamar-arrow {
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  font-weight: 800;
+}
+
+/* Section Styling */
+.kegiatan-section {
+  background: var(--white);
+  border: 2px solid var(--gray-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .kegiatan-grid,
+  .kelas-grid,
+  .kamar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kegiatan-card,
+  .kelas-card,
+  .kamar-card {
+    padding: 1rem;
+  }
+
+  .kegiatan-icon,
+  .kelas-icon,
+  .kamar-icon {
+    font-size: 1.5rem;
+  }
 }
