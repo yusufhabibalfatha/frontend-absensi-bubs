@@ -15,6 +15,7 @@ import DashboardGuru from "./components/DashboardGuru";
 import DashboardSiswa from "./components/DashboardSiswa";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PresensiSiswa from "./components/PresensiSiswa";
+import RekapPresensiGuru from "./components/RekapPresensiGuru";
 import "./style/styles.css";
 
 function App() {
@@ -78,6 +79,15 @@ function App() {
           element={
             <ProtectedRoute role="SISWA">
               <PresensiSiswa />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/rekap-presensi-guru"
+          element={
+            <ProtectedRoute role="GURU">
+              <RekapPresensiGuru />
             </ProtectedRoute>
           }
         />

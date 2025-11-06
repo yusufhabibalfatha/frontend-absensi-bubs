@@ -202,3 +202,128 @@
     min-width: auto;
   }
 }
+
+/* Tambahkan di Presensi.css */
+
+.export-button {
+  padding: 0.6rem 1rem;
+  color: white;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.export-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rekap-table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.rekap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.rekap-table th {
+  background: var(--primary-blue);
+  color: white;
+  padding: 1rem 0.8rem;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--black);
+}
+
+.rekap-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.rekap-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.rekap-table tr:hover {
+  background: #f0f9ff;
+}
+
+.rekap-table .nama-siswa {
+  font-weight: 600;
+  color: var(--black);
+}
+
+.rekap-table .number-cell {
+  text-align: center;
+  font-weight: 600;
+}
+
+.rekap-table .presentase-cell {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* Print Styles for PDF Export */
+@media print {
+  .navigation-controls,
+  .filter-section,
+  .export-button {
+    display: none !important;
+  }
+
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .rekap-table-container {
+    border: 1px solid #000 !important;
+  }
+
+  .rekap-table th {
+    background: #f3f4f6 !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+  }
+
+  .rekap-table td {
+    border: 1px solid #ddd !important;
+  }
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .rekap-table {
+    font-size: 0.8rem;
+  }
+
+  .rekap-table th,
+  .rekap-table td {
+    padding: 0.6rem 0.4rem;
+  }
+
+  .filter-section {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+}

@@ -50,7 +50,6 @@ const DashboardGuru = () => {
           🚪 Logout
         </button>
       </div>
-
       {/* User Info Card */}
       <div className="info-card">
         <div className="info-item teacher-info">
@@ -62,7 +61,6 @@ const DashboardGuru = () => {
           <span className="status-badge status-active">GURU</span>
         </div>
       </div>
-
       {/* Quick Actions */}
       <div style={{ margin: "2rem 0" }}>
         <h2
@@ -116,9 +114,20 @@ const DashboardGuru = () => {
             </div>
             <div className="kegiatan-arrow">⏳</div>
           </button>
+
+          <button
+            className="kegiatan-card"
+            onClick={() => navigate("/rekap-presensi-guru")}
+          >
+            <div className="kegiatan-icon">📊</div>
+            <div className="kegiatan-content">
+              <h3>Rekap Presensi</h3>
+              <p>Lihat rekap kehadiran siswa per kelas</p>
+            </div>
+            <div className="kegiatan-arrow">→</div>
+          </button>
         </div>
       </div>
-
       {/* Coming Soon Features */}
       <div
         style={{

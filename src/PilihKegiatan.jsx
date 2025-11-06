@@ -23,6 +23,8 @@ const PilihKegiatan = () => {
 
       const response = await fetch(url);
 
+      console.log("adas", response);
+
       if (!response.ok) {
         throw new Error("Gagal mengambil data kegiatan");
       }
