@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import QRScanner from "./components/QRScanner";
 import "./style/AbsensiSiswa.css";
 
-const AbsensiSiswa = () => {
+export default function AbsensiSiswa() {
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,11 +41,13 @@ const AbsensiSiswa = () => {
 
       const response = await fetch(url);
 
+      const result = await response.json();
+      console.log("response ", result);
+
       if (!response.ok) {
-        throw new Error("Gagal mengambil data");
+        throw new Error(result.message);
       }
 
-      const result = await response.json();
       setFormData(result.data);
       setGuru(result.kriteria.guru);
 
@@ -282,7 +284,7 @@ const AbsensiSiswa = () => {
         message += `${emoji} *${kategori}*\n`;
         list.forEach((item) => {
           if (item.keterangan) {
-            message += `- ${item.nama} (${item.keterangan})\n`;
+            message += `- ${item.nama} - (${item.keterangan})\n`;
           } else {
             message += `- ${item.nama}\n`;
           }
@@ -313,7 +315,6 @@ const AbsensiSiswa = () => {
       message
     )}`;
     window.location.href = whatsappUrl;
-    // window.open(whatsappUrl, "_blank");
   };
 
   const handleBack = () => {
@@ -851,7 +852,7 @@ const AbsensiSiswa = () => {
       )}
     </div>
   );
-};
+}
 
 // Helper function untuk contoh keterangan
 const getKeteranganContoh = (status) => {
@@ -868,5 +869,3 @@ const getKeteranganContoh = (status) => {
       return "tulis keterangan tambahan...";
   }
 };
-
-export default AbsensiSiswa;

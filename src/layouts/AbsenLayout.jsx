@@ -1,11 +1,9 @@
 import { Outlet } from "react-router-dom";
 
-const AbsenLayout = () => {
+export default function AbsenLayout() {
   return (
     <div className="absen-layout">
       <Outlet />
     </div>
   );
-};
-
-export default AbsenLayout;
+}
