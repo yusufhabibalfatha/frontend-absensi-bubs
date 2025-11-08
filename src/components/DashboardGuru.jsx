@@ -70,7 +70,18 @@ const DashboardGuru = () => {
         </h2>
 
         <div className="kegiatan-grid">
-          <button className="kegiatan-card" onClick={() => navigate("/pilih")}>
+          <button
+            className="kegiatan-card"
+            onClick={() => navigate("/rekap-presensi-guru")}
+          >
+            <div className="kegiatan-icon">📊</div>
+            <div className="kegiatan-content">
+              <h3>Rekap Presensi</h3>
+              <p>Lihat rekap kehadiran siswa per kelas</p>
+            </div>
+            <div className="kegiatan-arrow">→</div>
+          </button>
+          {/* <button className="kegiatan-card" onClick={() => navigate("/pilih")}>
             <div className="kegiatan-icon">📚</div>
             <div className="kegiatan-content">
               <h3>Absensi Pelajaran</h3>
@@ -89,7 +100,7 @@ const DashboardGuru = () => {
               <p>Absensi apel, upacara, pondok</p>
             </div>
             <div className="kegiatan-arrow">→</div>
-          </button>
+          </button> */}
 
           <button
             className="kegiatan-card"
@@ -113,18 +124,6 @@ const DashboardGuru = () => {
               <p>Fitur sedang dikembangkan</p>
             </div>
             <div className="kegiatan-arrow">⏳</div>
-          </button>
-
-          <button
-            className="kegiatan-card"
-            onClick={() => navigate("/rekap-presensi-guru")}
-          >
-            <div className="kegiatan-icon">📊</div>
-            <div className="kegiatan-content">
-              <h3>Rekap Presensi</h3>
-              <p>Lihat rekap kehadiran siswa per kelas</p>
-            </div>
-            <div className="kegiatan-arrow">→</div>
           </button>
         </div>
       </div>

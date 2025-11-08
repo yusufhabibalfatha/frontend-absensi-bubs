@@ -1,5 +1,5 @@
 // components/Login.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/Login.css";
 
@@ -11,6 +11,21 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      const parseUser = JSON.parse(user);
+
+      // Redirect based on role
+      if (parseUser.role === "GURU") {
+        navigate("/classroom/guru");
+      } else {
+        navigate("/classroom/siswa");
+      }
+    }
+  });
 
   const handleChange = (e) => {
     setFormData({
