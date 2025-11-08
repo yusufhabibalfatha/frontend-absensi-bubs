@@ -2,7 +2,7 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 15px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
 }
 
@@ -25,7 +25,7 @@ h2 {
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
 }
 
@@ -51,7 +51,9 @@ h2 {
   justify-content: center;
 }
 
-.day-button, .school-button, .subject-button {
+.day-button,
+.school-button,
+.subject-button {
   padding: 12px 8px;
   border: none;
   border-radius: 6px;
@@ -74,7 +76,7 @@ h2 {
 
 .day-button.selected {
   background: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .school-button {
@@ -88,7 +90,7 @@ h2 {
 
 .school-button.selected {
   background: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .school-button.disabled {
@@ -116,7 +118,7 @@ h2 {
 
 .subject-button.selected {
   background: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .selection-preview {
@@ -151,16 +153,18 @@ h2 {
   .button-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .subject-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .component {
     padding: 15px;
   }
-  
-  .day-button, .school-button, .subject-button {
+
+  .day-button,
+  .school-button,
+  .subject-button {
     padding: 10px 6px;
     font-size: 13px;
   }
@@ -170,15 +174,15 @@ h2 {
   .button-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .subject-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .app {
     padding: 10px;
   }
-  
+
   h1 {
     font-size: 20px;
     margin-bottom: 20px;
@@ -211,7 +215,7 @@ h2 {
 
 .class-button.selected {
   background: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Di file App.css */
@@ -242,4 +246,34 @@ h2 {
 
 .navigation-button:active {
   transform: translateY(0);
+}
+
+.btn-back-home {
+  background: var(--accent-yellow);
+  color: var(--black);
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 2px 2px 0px var(--black);
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-back-home:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--black);
+}
+.auto-selected-text {
+  text-align: center;
+  color: #27ae60;
+  font-style: italic;
+  margin-top: 10px;
+}
+.navigation-hint {
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  margin-top: 5px;
 }

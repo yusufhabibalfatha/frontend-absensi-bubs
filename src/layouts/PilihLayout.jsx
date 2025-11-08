@@ -1,11 +1,9 @@
 import { Outlet } from "react-router-dom";
 
-const PilihLayout = () => {
+export default function PilihLayout() {
   return (
     <div className="pilih-layout">
       <Outlet />
     </div>
   );
-};
-
-export default PilihLayout;
+}
