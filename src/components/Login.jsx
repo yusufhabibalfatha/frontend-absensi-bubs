@@ -129,8 +129,12 @@ const Login = () => {
           <p>
             <strong>Info Login:</strong>
           </p>
-          <p>• Guru: username guru, password: guru123</p>
-          <p>• Siswa: username siswa, password: siswa123</p>
+          <p>
+            • Guru: username nama lengkap guru tanpa spasi, password: guru123
+          </p>
+          <p>
+            • Siswa: username nama lengkap siswa tanpa spasi, password: siswa123
+          </p>
         </div>
       </div>
     </div>

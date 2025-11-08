@@ -55,15 +55,13 @@ const PresensiSiswa = () => {
 
       const result = await response.json();
 
-      console.log("log ", result);
-
       if (result.success) {
         setData(result.data);
       } else {
         setError(result.message || "Gagal mengambil data presensi");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.");
+      setError("Terjadi kesalahan. Coba lagi.", err);
     } finally {
       setLoading(false);
     }

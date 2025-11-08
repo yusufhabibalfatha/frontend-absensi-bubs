@@ -12,9 +12,9 @@ const RekapPresensiGuru = () => {
   const [error, setError] = useState("");
 
   // Filter states
-  const [selectedKelas, setSelectedKelas] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedKelas, setSelectedKelas] = useState("");
   const [selectedMapel, setSelectedMapel] = useState("");
   const [mapelList, setMapelList] = useState([]);
 
@@ -48,6 +48,14 @@ const RekapPresensiGuru = () => {
   useEffect(() => {
     if (selectedKelas) {
       fetchRekapData();
+
+      console.log(
+        "asd",
+        selectedKelas,
+        selectedMonth,
+        selectedYear,
+        selectedMapel
+      );
     }
   }, [selectedKelas, selectedMonth, selectedYear, selectedMapel]);
 
@@ -67,17 +75,23 @@ const RekapPresensiGuru = () => {
       const result = await response.json();
 
       if (result.success && result.data.length > 0) {
-        setKelasList(result.data);
-        setSelectedKelas(result.data[0].id);
+        result.data.map((e) => {
+          setKelasList((prev) => [...prev, e.nama_kelas]);
+        });
+        result.data.map((e) => {
+          setMapelList((prev) => [...prev, e.mata_pelajaran]);
+        });
       } else {
         setError("Tidak ada kelas yang diajar");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.");
+      setError("Terjadi kesalahan. Coba lagi.", err);
     } finally {
       setLoading(false);
     }
   };
+
+  mapelList && console.log("mapel ", mapelList);
 
   const fetchRekapData = async () => {
     try {
@@ -86,7 +100,7 @@ const RekapPresensiGuru = () => {
 
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
+      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}&mapel=PKN`;
 
       // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
@@ -102,7 +116,7 @@ const RekapPresensiGuru = () => {
 
       const result = await response.json();
 
-      console.log("resuyylt ", result);
+      console.log("result ", result);
 
       if (result.success) {
         setData(result.data);
@@ -111,7 +125,7 @@ const RekapPresensiGuru = () => {
         setError(result.message || "Gagal mengambil data rekap");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.");
+      setError("Terjadi kesalahan. Coba lagi.", err);
     } finally {
       setLoading(false);
     }
@@ -128,9 +142,9 @@ const RekapPresensiGuru = () => {
 
       // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/export-rekap-excel?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
-      if (selectedMapel) {
-        url += `&mapel=${encodeURIComponent(selectedMapel)}`;
-      }
+      // if (selectedMapel) {
+      //   url += `&mapel=${encodeURIComponent(selectedMapel)}`;
+      // }
 
       const response = await fetch(url, {
         headers: {
@@ -147,7 +161,7 @@ const RekapPresensiGuru = () => {
         alert(result.message || "Gagal export data");
       }
     } catch (err) {
-      alert("Terjadi kesalahan saat export");
+      alert("Terjadi kesalahan saat export", err);
     } finally {
       setExportLoading(false);
     }
@@ -197,11 +211,12 @@ const RekapPresensiGuru = () => {
             onChange={(e) => setSelectedKelas(e.target.value)}
             disabled={loading || kelasList.length === 0}
           >
-            {kelasList.map((kelas) => (
-              <option key={kelas.id} value={kelas.id}>
-                {kelas.nama_kelas}
-              </option>
-            ))}
+            {kelasList &&
+              kelasList.sort().map((kelas, index) => (
+                <option key={index} value={kelas}>
+                  {kelas}
+                </option>
+              ))}
           </select>
         </div>
 
