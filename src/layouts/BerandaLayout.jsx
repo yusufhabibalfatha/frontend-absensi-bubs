@@ -1,6 +1,5 @@
-// layouts/BerandaLayout.jsx
-import { Outlet } from 'react-router-dom';
-import '../style/styles.css';
+import { Outlet } from "react-router-dom";
+import "../style/styles.css";
 
 const BerandaLayout = () => {
   return (

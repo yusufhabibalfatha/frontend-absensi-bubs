@@ -1,65 +1,56 @@
-// Beranda.jsx
 import { useNavigate } from "react-router-dom";
+import {
+  handleMasuk,
+  handleKegiatan,
+  handleClassroom,
+} from "./utility/BerandaUtility";
 import "./style/styles.css";
 
-function Beranda() {
+export default function Beranda() {
   const navigate = useNavigate();
-
-  const handleMasuk = () => {
-    navigate("/pilih");
-  };
-
-  const handleKegiatan = () => {
-    navigate("/kegiatan");
-  };
-
-  const handleClassroom = () => {
-    navigate("/login");
-  };
 
   return (
     <div className="card">
-      <div className="school-decoration">
-        <div className="decoration-item">📚</div>
-        <div className="decoration-item">✏️</div>
-        <div className="decoration-item">🎓</div>
-      </div>
-
       <h1>Selamat Datang di Aplikasi Sekolah</h1>
+      <SchoolList />
+
       <p>
         Platform digital untuk mendukung kegiatan belajar mengajar dengan
         fitur-fitur yang memudahkan siswa dan guru.
       </p>
 
       <div className="button-group">
-        <button className="btn btn-primary" onClick={handleMasuk}>
-          Pilih Mata Pelajaran
+        <button
+          className="btn btn-primary"
+          onClick={() => handleMasuk(navigate)}
+        >
+          Absen Sekolah
         </button>
 
-        <button className="btn btn-secondary" onClick={handleKegiatan}>
-          Absen Kegiatan
+        <button
+          className="btn btn-secondary"
+          onClick={() => handleKegiatan(navigate)}
+        >
+          Absen Kegiatan Sekolah dan Pondok
         </button>
 
-        <button className="btn btn-secondary" onClick={handleClassroom}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => handleClassroom(navigate)}
+        >
           Classroom
         </button>
       </div>
-
-      {/* <div
-        style={{
-          marginTop: "2rem",
-          padding: "1rem",
-          background: "#fef3c7",
-          border: "3px solid #000",
-          borderRadius: "8px",
-        }}
-      >
-        <p style={{ margin: 0, fontSize: "0.9rem", color: "#92400e" }}>
-          <strong>Info:</strong> Fitur "Classroom" sedang dalam pengembangan.
-        </p>
-      </div> */}
     </div>
   );
 }
 
-export default Beranda;
+function SchoolList() {
+  return (
+    <div className="school-decoration">
+      <div className="decoration-item">📚</div>
+      <div className="decoration-item">✏️</div>
+      <div className="decoration-item">🎓</div>
+    </div>
+  );
+}

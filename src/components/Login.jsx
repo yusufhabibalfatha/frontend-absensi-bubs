@@ -53,7 +53,7 @@ const Login = () => {
         setError(result.message || "Login gagal");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.");
+      setError("Terjadi kesalahan. Coba lagi.", err);
     } finally {
       setLoading(false);
     }

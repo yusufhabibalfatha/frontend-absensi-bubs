@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Jika menggunakan React Router
-import './App.css';
-import { jadwalSMP, jadwalSMA } from './data/jadwal';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Jika menggunakan React Router
+import { jadwalSMP, jadwalSMA } from "./data/jadwal";
+import "./App.css";
 
 const PilihMapel = () => {
   const [selectedDay, setSelectedDay] = useState(null);
@@ -11,8 +11,8 @@ const PilihMapel = () => {
 
   const navigate = useNavigate(); // Jika menggunakan React Router
 
-  const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-  const schools = ['SMP', 'SMA'];
+  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const schools = ["SMP", "SMA"];
 
   // Fungsi untuk pindah halaman
   const pindahHalaman = () => {
@@ -22,21 +22,21 @@ const PilihMapel = () => {
         hari: selectedDay,
         sekolah: selectedSchool,
         mapel: selectedSubject,
-        kelas: selectedClass
+        kelas: selectedClass,
       };
-      
+
       // Opsi 1: Jika menggunakan React Router
-      navigate('/absen', { state: dataAbsensi });
+      navigate("/absen", { state: dataAbsensi });
     }
   };
 
   const getSubjects = () => {
     if (!selectedDay || !selectedSchool) return [];
-    
-    if (selectedSchool === 'SMP') {
+
+    if (selectedSchool === "SMP") {
       // Untuk SMP, kita gabungkan semua kelas dan ambil unique subjects
       const allSubjects = [];
-      Object.values(jadwalSMP).forEach(kelas => {
+      Object.values(jadwalSMP).forEach((kelas) => {
         if (kelas[selectedDay]) {
           allSubjects.push(...kelas[selectedDay]);
         }
@@ -46,7 +46,7 @@ const PilihMapel = () => {
       // return [...new Set(jadwalSMA.kelas_X[selectedDay])];
       // Untuk SMA, kita gabungkan semua kelas dan ambil unique subjects
       const allSubjects = [];
-      Object.values(jadwalSMA).forEach(kelas => {
+      Object.values(jadwalSMA).forEach((kelas) => {
         if (kelas[selectedDay]) {
           allSubjects.push(...kelas[selectedDay]);
         }
@@ -69,43 +69,49 @@ const PilihMapel = () => {
   const handleSubjectSelect = (subject) => {
     setSelectedSubject(subject);
     // Di sini nanti akan navigasi ke halaman absensi
-    console.log('Data yang dipilih:', {
+    console.log("Data yang dipilih:", {
       hari: selectedDay,
       sekolah: selectedSchool,
-      mapel: subject
+      mapel: subject,
     });
   };
 
   const getAvailableClasses = () => {
     if (!selectedDay || !selectedSchool || !selectedSubject) return [];
-    
+
     const availableClasses = [];
-    
-    if (selectedSchool === 'SMP') {
+
+    if (selectedSchool === "SMP") {
       Object.entries(jadwalSMP).forEach(([className, schedule]) => {
-        if (schedule[selectedDay] && schedule[selectedDay].includes(selectedSubject)) {
+        if (
+          schedule[selectedDay] &&
+          schedule[selectedDay].includes(selectedSubject)
+        ) {
           availableClasses.push(className);
         }
       });
     } else {
       Object.entries(jadwalSMA).forEach(([className, schedule]) => {
-        if (schedule[selectedDay] && schedule[selectedDay].includes(selectedSubject)) {
+        if (
+          schedule[selectedDay] &&
+          schedule[selectedDay].includes(selectedSubject)
+        ) {
           availableClasses.push(className);
         }
       });
     }
-    
+
     return availableClasses;
   };
 
   const handleClassSelect = (className) => {
     setSelectedClass(className);
     // Di sini nanti akan navigasi ke halaman absensi dengan data lengkap
-    console.log('Data lengkap yang dipilih:', {
+    console.log("Data lengkap yang dipilih:", {
       hari: selectedDay,
       sekolah: selectedSchool,
       mapel: selectedSubject,
-      kelas: className
+      kelas: className,
     });
   };
 
@@ -115,19 +121,42 @@ const PilihMapel = () => {
     setSelectedClass(availableClasses[0]);
   }
 
+  const handleBackToHome = () => {
+    navigate("/");
+  };
+
   return (
     <div className="app">
       <h1>📚 Sistem Absensi Sekolah</h1>
-      
+
+      <button
+        onClick={handleBackToHome}
+        style={{
+          background: "var(--accent-yellow)",
+          color: "var(--black)",
+          border: "2px solid var(--black)",
+          borderRadius: "6px",
+          padding: "0.5rem 1rem",
+          cursor: "pointer",
+          fontWeight: "600",
+          boxShadow: "2px 2px 0px var(--black)",
+          marginBottom: "1rem",
+        }}
+      >
+        ← Kembali ke Beranda
+      </button>
+
       <div className="components-container">
         {/* Komponen 1: Pilih Hari */}
         <div className="component">
           <h2>1. Pilih Hari</h2>
           <div className="button-grid">
-            {days.map(day => (
+            {days.map((day) => (
               <button
                 key={day}
-                className={`day-button ${selectedDay === day ? 'selected' : ''}`}
+                className={`day-button ${
+                  selectedDay === day ? "selected" : ""
+                }`}
                 onClick={() => handleDaySelect(day)}
               >
                 {day}
@@ -140,12 +169,12 @@ const PilihMapel = () => {
         <div className="component">
           <h2>2. Pilih Jenjang Sekolah</h2>
           <div className="school-grid">
-            {schools.map(school => (
+            {schools.map((school) => (
               <button
                 key={school}
-                className={`school-button ${selectedSchool === school ? 'selected' : ''} ${
-                  !selectedDay ? 'disabled' : ''
-                }`}
+                className={`school-button ${
+                  selectedSchool === school ? "selected" : ""
+                } ${!selectedDay ? "disabled" : ""}`}
                 onClick={() => handleSchoolSelect(school)}
                 disabled={!selectedDay}
               >
@@ -163,7 +192,9 @@ const PilihMapel = () => {
               {getSubjects().map((subject, index) => (
                 <button
                   key={index}
-                  className={`subject-button ${selectedSubject === subject ? 'selected' : ''}`}
+                  className={`subject-button ${
+                    selectedSubject === subject ? "selected" : ""
+                  }`}
                   onClick={() => handleSubjectSelect(subject)}
                 >
                   {subject}
@@ -180,18 +211,28 @@ const PilihMapel = () => {
               {getAvailableClasses().map((className, index) => (
                 <button
                   key={index}
-                  className={`class-button ${selectedClass === className ? 'selected' : ''}`}
+                  className={`class-button ${
+                    selectedClass === className ? "selected" : ""
+                  }`}
                   onClick={() => handleClassSelect(className)}
                 >
-                  {className.replace('_', ' ')}
+                  {className.replace("_", " ")}
                 </button>
               ))}
             </div>
-            
+
             {/* Auto-select notification */}
             {getAvailableClasses().length === 1 && (
-              <p style={{ textAlign: 'center', color: '#27ae60', fontStyle: 'italic', marginTop: '10px' }}>
-                ✅ Kelas {getAvailableClasses()[0].replace('_', ' ')} otomatis dipilih
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "#27ae60",
+                  fontStyle: "italic",
+                  marginTop: "10px",
+                }}
+              >
+                ✅ Kelas {getAvailableClasses()[0].replace("_", " ")} otomatis
+                dipilih
               </p>
             )}
           </div>
@@ -214,28 +255,47 @@ const PilihMapel = () => {
         )} */}
 
         {/* Preview Data yang Dipilih */}
-        {(selectedDay || selectedSchool || selectedSubject || selectedClass) && (
+        {(selectedDay ||
+          selectedSchool ||
+          selectedSubject ||
+          selectedClass) && (
           <div className="selection-preview">
             <h3>✅ Data yang Dipilih:</h3>
-            <p><strong>Hari:</strong> {selectedDay || '-'}</p>
-            <p><strong>Sekolah:</strong> {selectedSchool || '-'}</p>
-            <p><strong>Mata Pelajaran:</strong> {selectedSubject || '-'}</p>
-            <p><strong>Kelas:</strong> {selectedClass ? selectedClass.replace('_', ' ') : '-'}</p>
-            
+            <p>
+              <strong>Hari:</strong> {selectedDay || "-"}
+            </p>
+            <p>
+              <strong>Sekolah:</strong> {selectedSchool || "-"}
+            </p>
+            <p>
+              <strong>Mata Pelajaran:</strong> {selectedSubject || "-"}
+            </p>
+            <p>
+              <strong>Kelas:</strong>{" "}
+              {selectedClass ? selectedClass.replace("_", " ") : "-"}
+            </p>
+
             {/* Tombol Pindah Halaman - hanya muncul jika semua data lengkap */}
-            {selectedDay && selectedSchool && selectedSubject && selectedClass && (
-              <div className="navigation-section">
-                <button 
-                  className="navigation-button"
-                  onClick={pindahHalaman}
-                >
-                  📋 Lanjut ke Absensi
-                </button>
-                <p style={{ textAlign: 'center', fontStyle: 'italic', color: '#666', marginTop: '5px' }}>
-                  Klik untuk melanjutkan ke halaman absensi
-                </p>
-              </div>
-            )}
+            {selectedDay &&
+              selectedSchool &&
+              selectedSubject &&
+              selectedClass && (
+                <div className="navigation-section">
+                  <button className="navigation-button" onClick={pindahHalaman}>
+                    📋 Lanjut ke Absensi
+                  </button>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      fontStyle: "italic",
+                      color: "#666",
+                      marginTop: "5px",
+                    }}
+                  >
+                    Klik untuk melanjutkan ke halaman absensi
+                  </p>
+                </div>
+              )}
           </div>
         )}
       </div>
