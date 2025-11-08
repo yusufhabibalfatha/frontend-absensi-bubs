@@ -12,7 +12,7 @@ export default function AbsensiSiswa() {
   const [guru, setGuru] = useState(null);
   const [scanMessage, setScanMessage] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [editingKeterangan, setEditingKeterangan] = useState(null); // { id_siswa: null, status: null }
+  const [editingKeterangan, setEditingKeterangan] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef(null);
@@ -20,6 +20,10 @@ export default function AbsensiSiswa() {
   // Scroll to top when component mounts or data loads
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const fetchData = async () => {
@@ -42,7 +46,6 @@ export default function AbsensiSiswa() {
       const response = await fetch(url);
 
       const result = await response.json();
-      console.log("response ", result);
 
       if (!response.ok) {
         throw new Error(result.message);
@@ -58,10 +61,6 @@ export default function AbsensiSiswa() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleStatusChange = (id_siswa, newStatus) => {
     const updatedData = formData.map((item) => {
@@ -97,8 +96,6 @@ export default function AbsensiSiswa() {
 
   // Handle QR Scan Result
   const handleQRScan = (nik) => {
-    console.log("Scanning NIK:", nik);
-
     // Find student by NIK
     const student = formData.find((item) => item.nik === nik);
 

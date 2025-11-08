@@ -1,6 +1,7 @@
 // PilihKegiatan.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { handleBackToHome } from "./utility/pilihMapelUtils";
 import "./style/styles.css";
 
 const PilihKegiatan = () => {
@@ -19,11 +20,9 @@ const PilihKegiatan = () => {
 
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/siswa-kegiatan?`;
+      }/absensi-bubs/v1/jenis-kegiatan?`;
 
       const response = await fetch(url);
-
-      console.log("adas", response);
 
       if (!response.ok) {
         throw new Error("Gagal mengambil data kegiatan");
@@ -85,6 +84,12 @@ const PilihKegiatan = () => {
 
   return (
     <div className="card">
+      <button
+        onClick={() => handleBackToHome(navigate)}
+        className="btn-back-home"
+      >
+        ← Kembali ke Beranda
+      </button>
       <h1>📋 Pilih Jenis Kegiatan</h1>
       <p>Silakan pilih jenis kegiatan yang ingin dilakukan absensi:</p>
 

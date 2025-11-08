@@ -92,6 +92,10 @@ function App() {
           }
         />
       </Routes>
+
+      {/* <Route path="*" element={<BerandaLayout />}>
+        <Route index element={<Beranda />} />
+      </Route> */}
     </Router>
   );
 }
