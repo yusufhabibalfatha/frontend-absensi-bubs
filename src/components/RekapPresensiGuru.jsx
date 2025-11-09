@@ -35,6 +35,7 @@ const RekapPresensiGuru = () => {
     "Desember",
   ];
 
+  // fungsi periksa apakah user sudah login atau belum
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (!userData) {
@@ -45,19 +46,11 @@ const RekapPresensiGuru = () => {
     fetchKelasGuru();
   }, [navigate]);
 
-  useEffect(() => {
-    if (selectedKelas) {
-      fetchRekapData();
-
-      console.log(
-        "asd",
-        selectedKelas,
-        selectedMonth,
-        selectedYear,
-        selectedMapel
-      );
-    }
-  }, [selectedKelas, selectedMonth, selectedYear, selectedMapel]);
+  // useEffect(() => {
+  //   if (selectedKelas) {
+  //     fetchRekapData();
+  //   }
+  // }, [selectedKelas, selectedMonth, selectedYear, selectedMapel]);
 
   const fetchKelasGuru = async () => {
     try {
@@ -91,8 +84,6 @@ const RekapPresensiGuru = () => {
     }
   };
 
-  mapelList && console.log("mapel ", mapelList);
-
   const fetchRekapData = async () => {
     try {
       setLoading(true);
@@ -100,7 +91,7 @@ const RekapPresensiGuru = () => {
 
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}&mapel=PKN`;
+      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}&mapel=${selectedMapel}`;
 
       // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
@@ -115,8 +106,6 @@ const RekapPresensiGuru = () => {
       });
 
       const result = await response.json();
-
-      console.log("result ", result);
 
       if (result.success) {
         setData(result.data);
@@ -209,8 +198,9 @@ const RekapPresensiGuru = () => {
           <select
             value={selectedKelas}
             onChange={(e) => setSelectedKelas(e.target.value)}
-            disabled={loading || kelasList.length === 0}
+            disabled={loading}
           >
+            <option value="">Pilih Kelas</option>
             {kelasList &&
               kelasList.sort().map((kelas, index) => (
                 <option key={index} value={kelas}>
@@ -257,7 +247,7 @@ const RekapPresensiGuru = () => {
             onChange={(e) => setSelectedMapel(e.target.value)}
             disabled={loading}
           >
-            <option value="">Semua Mapel</option>
+            <option value="">Pilih Mapel</option>
             {mapelList.map((mapel, index) => (
               <option key={index} value={mapel}>
                 {mapel}
@@ -270,6 +260,15 @@ const RekapPresensiGuru = () => {
           className="filter-group"
           style={{ flexDirection: "row", alignItems: "end", gap: "0.5rem" }}
         >
+          {selectedKelas && selectedMonth && selectedYear && selectedMapel && (
+            <button
+              onClick={fetchRekapData}
+              disabled={loading}
+              className="refresh-button"
+            >
+              Cari Absen
+            </button>
+          )}
           <button
             onClick={fetchRekapData}
             disabled={loading}

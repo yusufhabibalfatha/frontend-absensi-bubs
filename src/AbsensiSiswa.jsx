@@ -39,6 +39,8 @@ export default function AbsensiSiswa() {
         mapel: location.state.mapel,
       });
 
+      console.log("liat ", location.state.mapel);
+
       let url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/jadwal-siswa?${params}`;

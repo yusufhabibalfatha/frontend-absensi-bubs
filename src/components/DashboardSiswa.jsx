@@ -89,6 +89,31 @@ const DashboardSiswa = () => {
         <div className="kegiatan-arrow">→</div>
       </button>
 
+      {/* TAMBAHKAN INI - FITUR BARU */}
+      <button
+        className="kegiatan-card"
+        onClick={() => navigate("/classroom/tugas-siswa")}
+      >
+        <div className="kegiatan-icon">📝</div>
+        <div className="kegiatan-content">
+          <h3>Lihat Tugas</h3>
+          <p>Tugas dan assignment dari guru</p>
+        </div>
+        <div className="kegiatan-arrow">→</div>
+      </button>
+
+      <button
+        className="kegiatan-card"
+        onClick={() => navigate("/classroom/materi-siswa")}
+      >
+        <div className="kegiatan-icon">📚</div>
+        <div className="kegiatan-content">
+          <h3>Materi Pelajaran</h3>
+          <p>Akses materi pembelajaran</p>
+        </div>
+        <div className="kegiatan-arrow">→</div>
+      </button>
+
       {/* Quick Stats */}
       <div
         style={{

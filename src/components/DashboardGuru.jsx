@@ -102,6 +102,31 @@ const DashboardGuru = () => {
             <div className="kegiatan-arrow">→</div>
           </button> */}
 
+          {/* TAMBAHKAN INI - FITUR BARU */}
+          <button
+            className="kegiatan-card"
+            onClick={() => navigate("/classroom/tugas-guru")}
+          >
+            <div className="kegiatan-icon">📝</div>
+            <div className="kegiatan-content">
+              <h3>Manage Tugas</h3>
+              <p>Buat dan kelola tugas untuk siswa</p>
+            </div>
+            <div className="kegiatan-arrow">→</div>
+          </button>
+
+          <button
+            className="kegiatan-card"
+            onClick={() => navigate("/classroom/materi-guru")}
+          >
+            <div className="kegiatan-icon">📚</div>
+            <div className="kegiatan-content">
+              <h3>Upload Materi</h3>
+              <p>Upload materi pelajaran untuk siswa</p>
+            </div>
+            <div className="kegiatan-arrow">→</div>
+          </button>
+
           <button
             className="kegiatan-card"
             style={{ opacity: 0.6, cursor: "not-allowed" }}

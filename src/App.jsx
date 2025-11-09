@@ -16,6 +16,10 @@ import DashboardSiswa from "./components/DashboardSiswa";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PresensiSiswa from "./components/PresensiSiswa";
 import RekapPresensiGuru from "./components/RekapPresensiGuru";
+import TugasGuru from "./components/TugasGuru";
+import MateriGuru from "./components/MateriGuru";
+import TugasSiswa from "./components/TugasSiswa";
+import MateriSiswa from "./components/MateriSiswa";
 import "./style/styles.css";
 
 function App() {
@@ -88,6 +92,39 @@ function App() {
           element={
             <ProtectedRoute role="GURU">
               <RekapPresensiGuru />
+            </ProtectedRoute>
+          }
+        />
+        {/* ROUTES BARU UNTUK TUGAS & MATERI */}
+        <Route
+          path="/classroom/tugas-guru"
+          element={
+            <ProtectedRoute role="GURU">
+              <TugasGuru />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classroom/materi-guru"
+          element={
+            <ProtectedRoute role="GURU">
+              <MateriGuru />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classroom/tugas-siswa"
+          element={
+            <ProtectedRoute role="SISWA">
+              <TugasSiswa />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classroom/materi-siswa"
+          element={
+            <ProtectedRoute role="SISWA">
+              <MateriSiswa />
             </ProtectedRoute>
           }
         />
