@@ -18,6 +18,7 @@ const MateriGuru = () => {
     }
     const userObj = JSON.parse(userData);
     setUser(userObj);
+
     fetchMateriGuru(userObj.id_guru);
   }, [navigate]);
 
@@ -25,9 +26,10 @@ const MateriGuru = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/materi/guru/${idGuru}`
+        `${import.meta.env.VITE_API_URL}/bubs/v1/materi/guru/${idGuru}`
       );
       const data = await response.json();
+
       setMateriList(data);
     } catch (error) {
       console.error("Error fetching materi:", error);
