@@ -18,7 +18,8 @@ const MateriSiswa = () => {
     setUser(userObj);
 
     // Ambil id_kelas dari user data atau fetch dari API
-    const idKelas = userObj.id_kelas || 1; // Fallback ke 1 jika tidak ada
+    const idKelas = userObj.id_kelas; // Fallback ke 1 jika tidak ada
+
     fetchMateriSiswa(idKelas);
   }, [navigate]);
 
@@ -26,11 +27,12 @@ const MateriSiswa = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/absensi-bubs/v1/materi/siswa/${idKelas}`
+        `${import.meta.env.VITE_API_URL}/bubs/v1/materi/siswa/${idKelas}`
       );
       const data = await response.json();
+
+      console.log("materi siswa ", data, "kelas = ", idKelas);
+      return;
       setMateriList(data);
     } catch (error) {
       console.error("Error fetching materi:", error);
