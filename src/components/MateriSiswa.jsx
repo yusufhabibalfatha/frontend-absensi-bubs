@@ -31,8 +31,6 @@ const MateriSiswa = () => {
       );
       const data = await response.json();
 
-      console.log("materi siswa ", data, "kelas = ", idKelas);
-      return;
       setMateriList(data);
     } catch (error) {
       console.error("Error fetching materi:", error);
