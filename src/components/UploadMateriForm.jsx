@@ -1,4 +1,5 @@
 // components/UploadMateriForm.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
@@ -23,7 +24,8 @@ const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
         }`
       );
       const data = await response.json();
-      setMataPelajaranList(data);
+
+      setMataPelajaranList(data.data);
     } catch (error) {
       console.error("Error fetching mata pelajaran:", error);
     }
@@ -47,21 +49,23 @@ const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
     submitData.append("file_materi", file);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/materi/upload`,
-        {
-          method: "POST",
-          body: submitData,
-        }
-      );
+      const url = `${import.meta.env.VITE_API_URL}/bubs/v1/materi/upload`;
 
-      const result = await response.json();
+      const response = await axios.post(url, submitData);
+      // const response = await fetch(url, {
+      //   method: "POST",
+      //   body: submitData,
+      // });
 
-      if (result.success) {
+      console.log("response ", response);
+
+      // const result = await response.json();
+
+      if (response.success) {
         alert("Materi berhasil diupload!");
         onSuccess();
       } else {
-        alert("Gagal upload materi: " + result.message);
+        alert("Gagal upload materi: " + response.message);
       }
     } catch (error) {
       console.error("Error uploading materi:", error);
@@ -130,8 +134,8 @@ const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
             }}
           >
             <option value="">Pilih Mata Pelajaran</option>
-            {mataPelajaranList.map((mapel) => (
-              <option key={mapel.id} value={mapel.id}>
+            {mataPelajaranList.map((mapel, index) => (
+              <option key={index} value={mapel.id}>
                 {mapel.mata_pelajaran} - {mapel.nama_kelas}
               </option>
             ))}
