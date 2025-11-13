@@ -14,30 +14,37 @@ const SubmissionForm = ({ tugas, user, onCancel, onSuccess }) => {
 
     const submitData = new FormData();
     submitData.append("id_tugas", tugas.id);
-    submitData.append("id_siswa", user.id);
+    submitData.append("id_siswa", user.id_siswa);
     submitData.append("jawaban_text", formData.jawaban_text);
 
     if (file) {
       submitData.append("file_jawaban", file);
     }
 
+    // for (let pair of submitData.entries()) {
+    //   console.log(pair[0] + ":", pair[1]);
+    // }
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/submission/create`,
+        `${import.meta.env.VITE_API_URL}/bubs/v1/submission/create`,
         {
           method: "POST",
           body: submitData,
         }
       );
 
-      const result = await response.json();
+      // const result = await response.json();
 
-      if (result.success) {
-        alert("Tugas berhasil dikumpulkan!");
-        onSuccess();
-      } else {
-        alert("Gagal mengumpulkan tugas: " + result.message);
-      }
+      console.log("asdasads", await response.json());
+      // console.log("result ", await response.json());
+
+      // if (result.success) {
+      //   alert("Tugas berhasil dikumpulkan!");
+      //   onSuccess();
+      // } else {
+      //   alert("Gagal mengumpulkan tugas: " + result.message);
+      // }
     } catch (error) {
       console.error("Error submitting tugas:", error);
       alert("Error mengumpulkan tugas");

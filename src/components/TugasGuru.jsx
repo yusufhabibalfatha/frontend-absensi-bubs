@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BuatTugasForm from "./BuatTugasForm";
+import axios from "axios";
 
 const TugasGuru = () => {
   const [user, setUser] = useState(null);
@@ -24,10 +25,16 @@ const TugasGuru = () => {
   const fetchTugasGuru = async (idGuru) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/tugas/guru/${idGuru}`
-      );
-      const data = await response.json();
+
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/bubs/v1/tugas/guru/${idGuru}`;
+
+      const response = await axios.get(url);
+
+      // Axios sudah otomatis parse JSON
+      const data = response.data;
+
       setTugasList(data);
     } catch (error) {
       console.error("Error fetching tugas:", error);

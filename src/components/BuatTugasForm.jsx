@@ -25,7 +25,8 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
         }`
       );
       const data = await response.json();
-      setMataPelajaranList(data);
+
+      setMataPelajaranList(data.data);
     } catch (error) {
       console.error("Error fetching mata pelajaran:", error);
     }
@@ -49,7 +50,7 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/tugas/create`,
+        `${import.meta.env.VITE_API_URL}/bubs/v1/tugas/create`,
         {
           method: "POST",
           body: submitData,
@@ -57,6 +58,8 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
       );
 
       const result = await response.json();
+
+      console.log("result ", result);
 
       if (result.success) {
         alert("Tugas berhasil dibuat!");

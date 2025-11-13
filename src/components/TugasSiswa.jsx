@@ -18,16 +18,17 @@ const TugasSiswa = () => {
     }
     const userObj = JSON.parse(userData);
     setUser(userObj);
-    fetchTugasSiswa(userObj.id);
+    fetchTugasSiswa(userObj.id_siswa);
   }, [navigate]);
 
   const fetchTugasSiswa = async (idSiswa) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/tugas/siswa/${idSiswa}`
+        `${import.meta.env.VITE_API_URL}/bubs/v1/tugas/siswa/${idSiswa}`
       );
       const data = await response.json();
+
       setTugasList(data);
     } catch (error) {
       console.error("Error fetching tugas:", error);
