@@ -241,7 +241,7 @@ const PresensiSiswa = () => {
       )}
 
       {/* Empty State */}
-      {!loading && !error && (
+      {loading && error && (
         <div className="empty-state">
           <p>📭 Tidak ada data presensi untuk periode ini</p>
           <button onClick={fetchPresensiData} className="retry-button">
