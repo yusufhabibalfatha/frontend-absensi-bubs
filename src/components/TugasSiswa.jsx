@@ -16,6 +16,8 @@ const TugasSiswa = () => {
       navigate("/login");
       return;
     }
+
+    console.log("use effect");
     const userObj = JSON.parse(userData);
     setUser(userObj);
     fetchTugasSiswa(userObj.id_siswa);
@@ -47,7 +49,7 @@ const TugasSiswa = () => {
 
   const handleSubmissionSuccess = () => {
     setSelectedTugas(null);
-    fetchTugasSiswa(user.id);
+    fetchTugasSiswa(user.id_siswa);
   };
 
   if (loading) {

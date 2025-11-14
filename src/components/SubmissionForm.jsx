@@ -34,17 +34,14 @@ const SubmissionForm = ({ tugas, user, onCancel, onSuccess }) => {
         }
       );
 
-      // const result = await response.json();
+      const result = await response.json();
 
-      console.log("asdasads", await response.json());
-      // console.log("result ", await response.json());
-
-      // if (result.success) {
-      //   alert("Tugas berhasil dikumpulkan!");
-      //   onSuccess();
-      // } else {
-      //   alert("Gagal mengumpulkan tugas: " + result.message);
-      // }
+      if (result.success) {
+        alert("Tugas berhasil dikumpulkan!");
+        onSuccess();
+      } else {
+        alert("Gagal mengumpulkan tugas: " + result.message);
+      }
     } catch (error) {
       console.error("Error submitting tugas:", error);
       alert("Error mengumpulkan tugas");

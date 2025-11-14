@@ -20,6 +20,7 @@ import TugasGuru from "./components/TugasGuru";
 import MateriGuru from "./components/MateriGuru";
 import TugasSiswa from "./components/TugasSiswa";
 import MateriSiswa from "./components/MateriSiswa";
+import SubmissionList from "./components/SubmissionList";
 import "./style/styles.css";
 
 function App() {
@@ -125,6 +126,15 @@ function App() {
           element={
             <ProtectedRoute role="SISWA">
               <MateriSiswa />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/classroom/submissions/:id"
+          element={
+            <ProtectedRoute role="GURU">
+              <SubmissionList />
             </ProtectedRoute>
           }
         />
