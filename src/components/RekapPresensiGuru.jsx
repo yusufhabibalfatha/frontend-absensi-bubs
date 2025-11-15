@@ -18,6 +18,8 @@ const RekapPresensiGuru = () => {
   const [selectedMapel, setSelectedMapel] = useState("");
   const [mapelList, setMapelList] = useState([]);
 
+  const [kelasMapel, setKelasMapel] = useState({});
+
   const navigate = useNavigate();
 
   const months = [
@@ -46,11 +48,11 @@ const RekapPresensiGuru = () => {
     fetchKelasGuru();
   }, [navigate]);
 
-  // useEffect(() => {
-  //   if (selectedKelas) {
-  //     fetchRekapData();
-  //   }
-  // }, [selectedKelas, selectedMonth, selectedYear, selectedMapel]);
+  useEffect(() => {
+    if (selectedKelas) {
+      fetchRekapData();
+    }
+  }, [selectedKelas, selectedMonth, selectedYear, selectedMapel]);
 
   const fetchKelasGuru = async () => {
     try {
@@ -66,14 +68,30 @@ const RekapPresensiGuru = () => {
       });
 
       const result = await response.json();
+      console.log("🚀 ~ fetchKelasGuru ~ result:", result);
+
+      // if (result.success && result.data.length > 0) {
+      //   result.data.map((e) => {
+      //     setKelasList((prev) => [...prev, e.nama_kelas]);
+      //   });
+      //   result.data.map((e) => {
+      //     setMapelList((prev) => [...prev, e.mata_pelajaran]);
+      //   });
+      // } else {
+      //   setError("Tidak ada kelas yang diajar");
+      // }
 
       if (result.success && result.data.length > 0) {
-        result.data.map((e) => {
-          setKelasList((prev) => [...prev, e.nama_kelas]);
+        // Buat mapping kelas → mapel
+        const map = {};
+
+        result.data.forEach((e) => {
+          map[e.nama_kelas] = e.mata_pelajaran;
         });
-        result.data.map((e) => {
-          setMapelList((prev) => [...prev, e.mata_pelajaran]);
-        });
+
+        // Simpan
+        setKelasMapel(map);
+        setKelasList(Object.keys(map)); // array kelas unik
       } else {
         setError("Tidak ada kelas yang diajar");
       }
@@ -91,7 +109,7 @@ const RekapPresensiGuru = () => {
 
       let url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}&mapel=${selectedMapel}`;
+      }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
       // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
@@ -106,6 +124,7 @@ const RekapPresensiGuru = () => {
       });
 
       const result = await response.json();
+      console.log("🚀 ~ fetchRekapData ~ result:", result);
 
       if (result.success) {
         setData(result.data);
@@ -128,6 +147,15 @@ const RekapPresensiGuru = () => {
       let url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/export-rekap-excel?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
+      console.log("🚀 ~ fetchRekapData ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
 
       // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/export-rekap-excel?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
@@ -176,6 +204,14 @@ const RekapPresensiGuru = () => {
     );
   }
 
+  const handleKelasChange = (e) => {
+    const kelas = e.target.value;
+    setSelectedKelas(kelas);
+
+    // otomatis ubah mapel sesuai kelas
+    setSelectedMapel(kelasMapel[kelas]);
+  };
+
   return (
     <div className="card">
       <div className="navigation-controls">
@@ -193,7 +229,7 @@ const RekapPresensiGuru = () => {
 
       {/* Filter Section */}
       <div className="filter-section">
-        <div className="filter-group">
+        {/* <div className="filter-group">
           <label>Kelas:</label>
           <select
             value={selectedKelas}
@@ -207,6 +243,22 @@ const RekapPresensiGuru = () => {
                   {kelas}
                 </option>
               ))}
+          </select>
+        </div> */}
+
+        <div className="filter-group">
+          <label>Kelas:</label>
+          <select
+            value={selectedKelas}
+            onChange={handleKelasChange}
+            disabled={loading}
+          >
+            <option value="">Pilih Kelas</option>
+            {kelasList.sort().map((kelas, index) => (
+              <option key={index} value={kelas}>
+                {kelas}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -240,7 +292,7 @@ const RekapPresensiGuru = () => {
           </select>
         </div>
 
-        <div className="filter-group">
+        {/* <div className="filter-group">
           <label>Mata Pelajaran:</label>
           <select
             value={selectedMapel}
@@ -254,21 +306,18 @@ const RekapPresensiGuru = () => {
               </option>
             ))}
           </select>
+        </div> */}
+        <div className="filter-group">
+          <label>Mata Pelajaran:</label>
+          <select value={selectedMapel} disabled>
+            <option value="">{selectedMapel || "Pilih kelas dulu"}</option>
+          </select>
         </div>
 
         <div
           className="filter-group"
           style={{ flexDirection: "row", alignItems: "end", gap: "0.5rem" }}
         >
-          {selectedKelas && selectedMonth && selectedYear && selectedMapel && (
-            <button
-              onClick={fetchRekapData}
-              disabled={loading}
-              className="refresh-button"
-            >
-              Cari Absen
-            </button>
-          )}
           <button
             onClick={fetchRekapData}
             disabled={loading}
@@ -305,25 +354,37 @@ const RekapPresensiGuru = () => {
         <div className="statistics-grid">
           <div className="stat-card">
             <div className="stat-number" style={{ color: "#10b981" }}>
-              {data.reduce((sum, row) => sum + row.hadir, 0)}
+              {data.reduce((sum, row) => {
+                const hadir = Number(row.hadir);
+                return isNaN(hadir) ? sum : sum + hadir;
+              }, 0)}
             </div>
             <div className="stat-label">Total Hadir</div>
           </div>
           <div className="stat-card">
             <div className="stat-number" style={{ color: "#f59e0b" }}>
-              {data.reduce((sum, row) => sum + row.izin, 0)}
+              {data.reduce((sum, row) => {
+                const izin = Number(row.izin);
+                return isNaN(izin) ? sum : sum + izin;
+              }, 0)}
             </div>
             <div className="stat-label">Total Izin</div>
           </div>
           <div className="stat-card">
             <div className="stat-number" style={{ color: "#ef4444" }}>
-              {data.reduce((sum, row) => sum + row.sakit, 0)}
+              {data.reduce((sum, row) => {
+                const sakit = Number(row.sakit);
+                return isNaN(sakit) ? sum : sum + sakit;
+              }, 0)}
             </div>
             <div className="stat-label">Total Sakit</div>
           </div>
           <div className="stat-card">
             <div className="stat-number" style={{ color: "#6b7280" }}>
-              {data.reduce((sum, row) => sum + row.alpa, 0)}
+              {data.reduce((sum, row) => {
+                const alpa = Number(row.alpa);
+                return isNaN(alpa) ? sum : sum + alpa;
+              }, 0)}
             </div>
             <div className="stat-label">Total Alpa</div>
           </div>
@@ -347,13 +408,13 @@ const RekapPresensiGuru = () => {
                 <th>Izin</th>
                 <th>Sakit</th>
                 <th>Alpa</th>
-                <th>Total</th>
+                <th>Total pertemuan</th>
                 <th>Presentase</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row, index) => (
-                <tr key={row.id_siswa}>
+                <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{row.nik}</td>
                   <td className="nama-siswa">{row.nama_lengkap}</td>

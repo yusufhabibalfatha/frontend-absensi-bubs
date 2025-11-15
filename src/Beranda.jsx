@@ -31,7 +31,7 @@ export default function Beranda() {
           className="btn btn-secondary"
           onClick={() => handleKegiatan(navigate)}
         >
-          Absen Kegiatan Sekolah dan Pondok
+          Absen Kegiatan
         </button>
 
         <button
