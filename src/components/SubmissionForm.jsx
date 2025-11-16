@@ -1,4 +1,4 @@
-// components/SubmissionForm.jsx
+import axios from "axios";
 import { useState } from "react";
 
 const SubmissionForm = ({ tugas, user, onCancel, onSuccess }) => {
@@ -21,20 +21,18 @@ const SubmissionForm = ({ tugas, user, onCancel, onSuccess }) => {
       submitData.append("file_jawaban", file);
     }
 
-    // for (let pair of submitData.entries()) {
-    //   console.log(pair[0] + ":", pair[1]);
-    // }
-
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/bubs/v1/submission/create`,
+        submitData,
         {
-          method: "POST",
-          body: submitData,
+          headers: {
+            "Content-Type": "multipart/form-data", // Set the content type for FormData
+          },
         }
       );
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         alert("Tugas berhasil dikumpulkan!");

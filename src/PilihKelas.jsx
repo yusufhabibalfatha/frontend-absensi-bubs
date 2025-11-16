@@ -1,4 +1,4 @@
-// PilihKelas.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./style/styles.css";
@@ -23,17 +23,13 @@ const PilihKelas = () => {
     try {
       setLoading(true);
 
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/kelas-boarding`;
 
-      const response = await fetch(url);
+      const response = await axios.get(url);
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data kelas");
-      }
-
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         setKelas(result.data);

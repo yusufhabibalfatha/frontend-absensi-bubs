@@ -1,4 +1,4 @@
-// AbsensiKegiatan.jsx
+import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRScanner from "./components/QRScanner";
@@ -49,13 +49,9 @@ const AbsensiKegiatan = () => {
         throw new Error("Data tidak lengkap");
       }
 
-      const response = await fetch(url);
+      const response = await axios.get(url);
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data siswa");
-      }
-
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         setFormData(result.data);
@@ -65,7 +61,7 @@ const AbsensiKegiatan = () => {
 
       window.scrollTo(0, 0);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -199,28 +195,26 @@ const AbsensiKegiatan = () => {
         throw new Error("Tidak ada data absensi yang akan disimpan");
       }
 
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/insert/absensi-kegiatan`;
 
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, submissionData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(submissionData),
       });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (!response.ok) {
+      if (result.success) {
+        setSuccessMessage("Absensi kegiatan berhasil disimpan!");
+        handleShare();
+      } else {
         throw new Error(result.message || "Gagal menyimpan absensi");
       }
-
-      setSuccessMessage("Absensi kegiatan berhasil disimpan!");
-      handleShare();
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setSubmitLoading(false);
     }

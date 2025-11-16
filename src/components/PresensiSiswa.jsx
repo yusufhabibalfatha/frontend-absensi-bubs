@@ -1,4 +1,4 @@
-// components/PresensiSiswa.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/Presensi.css";
@@ -43,17 +43,17 @@ const PresensiSiswa = () => {
       setLoading(true);
       const userData = JSON.parse(localStorage.getItem("user"));
 
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/presensi-siswa?bulan=${selectedMonth}&tahun=${selectedYear}`;
 
-      const response = await fetch(url, {
+      const response = await axios.get(url, {
         headers: {
           "X-User-Data": JSON.stringify(userData),
         },
       });
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         setData(result.data);
@@ -61,7 +61,10 @@ const PresensiSiswa = () => {
         setError(result.message || "Gagal mengambil data presensi");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.", err);
+      setError(
+        "Terjadi kesalahan. Coba lagi.",
+        err.response?.data?.message || err.message
+      );
     } finally {
       setLoading(false);
     }

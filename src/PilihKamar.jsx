@@ -1,4 +1,4 @@
-// PilihKamar.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./style/styles.css";
@@ -22,15 +22,11 @@ const PilihKamar = () => {
   const fetchKamar = async () => {
     try {
       setLoading(true);
-      let url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/kamar`;
 
-      const response = await fetch(url);
+      const url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/kamar`;
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data kamar");
-      }
-
-      const result = await response.json();
+      const response = await axios.get(url);
+      const result = response.data;
 
       if (result.success) {
         setKamar(result.data);
@@ -38,7 +34,7 @@ const PilihKamar = () => {
         throw new Error("Data kamar tidak ditemukan");
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

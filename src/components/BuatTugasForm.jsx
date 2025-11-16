@@ -1,4 +1,4 @@
-// components/BuatTugasForm.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
@@ -18,15 +18,20 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
   }, []);
 
   const fetchMataPelajaranGuru = async () => {
+    const userData = JSON.parse(localStorage.getItem("user"));
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/kelas-guru?id_guru=${
           user.id_guru
-        }`
+        }`,
+        {
+          headers: {
+            "X-User-Data": JSON.stringify(userData),
+          },
+        }
       );
-      const data = await response.json();
 
-      setMataPelajaranList(data.data);
+      setMataPelajaranList(response.data.data);
     } catch (error) {
       console.error("Error fetching mata pelajaran:", error);
     }
@@ -49,17 +54,17 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
     }
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/bubs/v1/tugas/create`,
+        submitData,
         {
-          method: "POST",
-          body: submitData,
+          headers: {
+            "Content-Type": "multipart/form-data", // Pastikan header untuk FormData
+          },
         }
       );
 
-      const result = await response.json();
-
-      console.log("result ", result);
+      const result = response.data;
 
       if (result.success) {
         alert("Tugas berhasil dibuat!");
@@ -134,8 +139,8 @@ const BuatTugasForm = ({ user, onCancel, onSuccess }) => {
             }}
           >
             <option value="">Pilih Mata Pelajaran</option>
-            {mataPelajaranList.map((mapel) => (
-              <option key={mapel.id} value={mapel.id}>
+            {mataPelajaranList.map((mapel, index) => (
+              <option key={index} value={mapel.id}>
                 {mapel.mata_pelajaran} - {mapel.nama_kelas}
               </option>
             ))}

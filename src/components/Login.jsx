@@ -1,4 +1,4 @@
-// components/Login.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/Login.css";
@@ -41,17 +41,15 @@ const Login = () => {
     setError("");
 
     try {
-      let url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/login`;
+      const url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/login`;
 
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, formData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         // Save user data to localStorage
@@ -68,7 +66,7 @@ const Login = () => {
         setError(result.message || "Login gagal");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.", err);
+      setError("Terjadi kesalahan. Coba lagi.", err.message);
     } finally {
       setLoading(false);
     }

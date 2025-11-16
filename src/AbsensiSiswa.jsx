@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRScanner from "./components/QRScanner";
@@ -33,21 +34,21 @@ export default function AbsensiSiswa() {
     setScanMessage(null);
 
     try {
-      const params = new URLSearchParams({
+      const params = {
         kelas: location.state.kelas,
         hari: location.state.hari,
         mapel: location.state.mapel,
-      });
+      };
 
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/jadwal-siswa?${params}`;
+      }/absensi-bubs/v1/jadwal-siswa`;
 
-      const response = await fetch(url);
+      const response = await axios.get(url, { params });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error(result.message);
       }
 
@@ -184,30 +185,29 @@ export default function AbsensiSiswa() {
     setScanMessage(null);
 
     try {
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/insert/absensi-sekolah`;
 
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, formData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (!response.ok) {
+      if (result.success) {
+        setSuccessMessage("Absensi berhasil disimpan!");
+      } else {
         throw new Error(result.message || "Gagal menyimpan absensi");
       }
-
-      setSuccessMessage("Absensi berhasil disimpan!");
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setSubmitLoading(false);
     }
+
     handleShare();
   };
 

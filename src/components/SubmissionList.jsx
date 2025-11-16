@@ -1,4 +1,4 @@
-// components/SubmissionList.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -28,20 +28,18 @@ const SubmissionList = () => {
       setLoading(true);
 
       // Fetch submissions
-      const submissionResponse = await fetch(
+      const submissionResponse = await axios.get(
         `${import.meta.env.VITE_API_URL}/bubs/v1/submission/tugas/${tugasId}`
       );
 
-      const submissionData = await submissionResponse.json();
-      setSubmissions(submissionData);
+      setSubmissions(submissionResponse.data);
 
       // Fetch tugas detail
-      const tugasResponse = await fetch(
+      const tugasResponse = await axios.get(
         `${import.meta.env.VITE_API_URL}/bubs/v1/tugas/guru/${guruId}`
       );
-      const tugasData = await tugasResponse.json();
 
-      const currentTugas = tugasData.find((t) => t.id == tugasId);
+      const currentTugas = tugasResponse.data.find((t) => t.id == tugasId);
       setTugas(currentTugas);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -73,23 +71,22 @@ const SubmissionList = () => {
     }
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/nilai/beri`,
         {
-          method: "POST",
+          id_submission: selectedSubmission.id,
+          id_guru: user.id_guru,
+          nilai: parseInt(gradingData.nilai),
+          catatan_guru: gradingData.catatan_guru,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            id_submission: selectedSubmission.id,
-            id_guru: user.id_guru,
-            nilai: parseInt(gradingData.nilai),
-            catatan_guru: gradingData.catatan_guru,
-          }),
         }
       );
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         alert("Nilai berhasil diberikan!");

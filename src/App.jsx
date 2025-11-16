@@ -1,6 +1,7 @@
 // App.jsx (tambahkan import dan routes baru)
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PilihLayout from "./layouts/PilihLayout";
+import NotFound from "./components/NotFound";
 import AbsenLayout from "./layouts/AbsenLayout";
 import PilihMapel from "./PilihMapel";
 import AbsensiSiswa from "./AbsensiSiswa";
@@ -27,22 +28,18 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Route untuk halaman Beranda */}
         <Route path="/" element={<BerandaLayout />}>
           <Route index element={<Beranda />} />
         </Route>
 
-        {/* Route untuk halaman Pilih Mapel */}
         <Route path="/pilih" element={<PilihLayout />}>
           <Route index element={<PilihMapel />} />
         </Route>
 
-        {/* Route untuk halaman Absen Sekolah */}
         <Route path="/absen" element={<AbsenLayout />}>
           <Route index element={<AbsensiSiswa />} />
         </Route>
 
-        {/* Route untuk halaman Absensi Kegiatan */}
         <Route path="/kegiatan" element={<BerandaLayout />}>
           <Route index element={<PilihKegiatan />} />
         </Route>
@@ -138,11 +135,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-
-      {/* <Route path="*" element={<BerandaLayout />}>
-        <Route index element={<Beranda />} />
-      </Route> */}
     </Router>
   );
 }

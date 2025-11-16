@@ -18,14 +18,19 @@ const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
 
   const fetchMataPelajaranGuru = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/kelas-guru?id_guru=${
-          user.id_guru
-        }`
-      );
-      const data = await response.json();
+      const userData = JSON.parse(localStorage.getItem("user"));
 
-      setMataPelajaranList(data.data);
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/absensi-bubs/v1/kelas-guru?id_guru=${user.id_guru}`;
+
+      const response = await axios.get(url, {
+        headers: {
+          "X-User-Data": JSON.stringify(userData),
+        },
+      });
+
+      setMataPelajaranList(response.data.data);
     } catch (error) {
       console.error("Error fetching mata pelajaran:", error);
     }
@@ -52,16 +57,8 @@ const UploadMateriForm = ({ user, onCancel, onSuccess }) => {
       const url = `${import.meta.env.VITE_API_URL}/bubs/v1/materi/upload`;
 
       const response = await axios.post(url, submitData);
-      // const response = await fetch(url, {
-      //   method: "POST",
-      //   body: submitData,
-      // });
 
-      console.log("response ", response);
-
-      // const result = await response.json();
-
-      if (response.success) {
+      if (response.data.success) {
         alert("Materi berhasil diupload!");
         onSuccess();
       } else {

@@ -1,4 +1,4 @@
-// components/RekapPresensiGuru.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/Presensi.css";
@@ -61,25 +61,13 @@ const RekapPresensiGuru = () => {
 
       let url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/kelas-guru`;
 
-      const response = await fetch(url, {
+      const response = await axios.get(url, {
         headers: {
           "X-User-Data": JSON.stringify(userData),
         },
       });
 
-      const result = await response.json();
-      console.log("🚀 ~ fetchKelasGuru ~ result:", result);
-
-      // if (result.success && result.data.length > 0) {
-      //   result.data.map((e) => {
-      //     setKelasList((prev) => [...prev, e.nama_kelas]);
-      //   });
-      //   result.data.map((e) => {
-      //     setMapelList((prev) => [...prev, e.mata_pelajaran]);
-      //   });
-      // } else {
-      //   setError("Tidak ada kelas yang diajar");
-      // }
+      const result = response.data;
 
       if (result.success && result.data.length > 0) {
         // Buat mapping kelas → mapel
@@ -96,7 +84,10 @@ const RekapPresensiGuru = () => {
         setError("Tidak ada kelas yang diajar");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.", err);
+      setError(
+        "Terjadi kesalahan. Coba lagi.",
+        err.response?.data?.message || err.message
+      );
     } finally {
       setLoading(false);
     }
@@ -111,20 +102,17 @@ const RekapPresensiGuru = () => {
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
 
-      // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/rekap-presensi-kelas-detailed?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
-
       if (selectedMapel) {
         url += `&mapel=${encodeURIComponent(selectedMapel)}`;
       }
 
-      const response = await fetch(url, {
+      const response = await axios.get(url, {
         headers: {
           "X-User-Data": JSON.stringify(userData),
         },
       });
 
-      const result = await response.json();
-      console.log("🚀 ~ fetchRekapData ~ result:", result);
+      const result = response.data;
 
       if (result.success) {
         setData(result.data);
@@ -133,7 +121,10 @@ const RekapPresensiGuru = () => {
         setError(result.message || "Gagal mengambil data rekap");
       }
     } catch (err) {
-      setError("Terjadi kesalahan. Coba lagi.", err);
+      setError(
+        "Terjadi kesalahan. Coba lagi.",
+        err.response?.data?.message || err.message
+      );
     } finally {
       setLoading(false);
     }
@@ -147,38 +138,25 @@ const RekapPresensiGuru = () => {
       let url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/v1/export-rekap-excel?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
-      console.log("🚀 ~ fetchRekapData ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
-      console.log("🚀 ~ fetchKelasGuru ~ url:", url);
+      if (selectedMapel) {
+        url += `&mapel=${encodeURIComponent(selectedMapel)}`;
+      }
 
-      // let url = `https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/export-rekap-excel?kelas=${selectedKelas}&bulan=${selectedMonth}&tahun=${selectedYear}`;
-
-      // if (selectedMapel) {
-      //   url += `&mapel=${encodeURIComponent(selectedMapel)}`;
-      // }
-
-      const response = await fetch(url, {
+      const response = await axios.get(url, {
         headers: {
           "X-User-Data": JSON.stringify(userData),
         },
       });
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
-        // Download file
         window.open(result.file_url, "_blank");
       } else {
         alert(result.message || "Gagal export data");
       }
     } catch (err) {
-      alert("Terjadi kesalahan saat export", err);
+      alert("Terjadi kesalahan saat export", err.message || err);
     } finally {
       setExportLoading(false);
     }

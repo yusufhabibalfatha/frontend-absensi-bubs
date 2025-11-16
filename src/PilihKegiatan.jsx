@@ -1,4 +1,4 @@
-// PilihKegiatan.jsx
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleBackToHome } from "./utility/pilihMapelUtils";
@@ -18,17 +18,13 @@ const PilihKegiatan = () => {
     try {
       setLoading(true);
 
-      let url = `${
+      const url = `${
         import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/jenis-kegiatan?`;
+      }/absensi-bubs/v1/jenis-kegiatan`;
 
-      const response = await fetch(url);
+      const response = await axios.get(url);
 
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data kegiatan");
-      }
-
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         setKegiatan(result.data);
