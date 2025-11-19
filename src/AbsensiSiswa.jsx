@@ -837,13 +837,15 @@ export default function AbsensiSiswa() {
 
           {/* Form Actions */}
           <div className="form-actions">
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className="submit-button"
-            >
-              {submitLoading ? "💾 Menyimpan..." : "📤 Bagikan ke WhatsApp"}
-            </button>
+            {!formData.filter((item) => !item.status).length > 0 && (
+              <button
+                type="submit"
+                disabled={submitLoading}
+                className="submit-button"
+              >
+                {submitLoading ? "💾 Menyimpan..." : "📤 Bagikan ke WhatsApp"}
+              </button>
+            )}
           </div>
         </form>
       )}
