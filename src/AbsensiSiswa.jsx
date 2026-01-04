@@ -244,15 +244,16 @@ export default function AbsensiSiswa() {
       }
     });
 
-    let message = `📅 *Rekap Absensi Siswa ${dataTambahan.kelas}*\n`;
-    message += `*Tanggal:* ${tanggalLengkap}\n`;
-
-    if (dataTambahan.guruMapel) {
-      message += `*Guru Mapel:* ${dataTambahan.guruMapel}\n`;
-    }
+    let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
+    message += `*Kelas:* ${dataTambahan.kelas}\n`;
     if (dataTambahan.mapel) {
       message += `*Mapel:* ${dataTambahan.mapel}\n`;
     }
+
+    if (dataTambahan.guruMapel) {
+      message += `*Guru:* ${dataTambahan.guruMapel}\n`;
+    }
+    // message += `*Tanggal:* ${tanggalLengkap}\n`;
 
     message += `\n`;
 
