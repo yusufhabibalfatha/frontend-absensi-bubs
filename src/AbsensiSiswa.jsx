@@ -46,6 +46,8 @@ export default function AbsensiSiswa() {
 
       const response = await axios.get(url, { params });
 
+      console.log("response ", response);
+
       const result = response.data;
 
       if (response.status !== 200) {
