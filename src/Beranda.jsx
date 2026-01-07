@@ -10,6 +10,8 @@ import "./style/styles.css";
 export default function Beranda() {
   const navigate = useNavigate();
 
+  const versionApp = "version app : v1";
+
   return (
     <div className="card">
       <h1>Selamat Datang di Aplikasi Sekolah</h1>
@@ -50,6 +52,7 @@ export default function Beranda() {
           QR Code Siswa
         </button>
       </div>
+      <p style={{ textAlign: "center", fontSize: "9px" }}>{versionApp}</p>
     </div>
   );
 }
