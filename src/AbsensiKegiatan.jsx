@@ -13,6 +13,10 @@ const AbsensiKegiatan = () => {
   const [scanMessage, setScanMessage] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [editingKeterangan, setEditingKeterangan] = useState(null);
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [waMessage, setWaMessage] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef(null);
@@ -209,7 +213,10 @@ const AbsensiKegiatan = () => {
 
       if (result.success) {
         setSuccessMessage("Absensi kegiatan berhasil disimpan!");
-        handleShare();
+
+        const text = generateWhatsAppText();
+        setWaMessage(text);
+        setIsPreviewOpen(true);
       } else {
         throw new Error(result.message || "Gagal menyimpan absensi");
       }
@@ -220,7 +227,101 @@ const AbsensiKegiatan = () => {
     }
   };
 
-  const handleShare = () => {
+  // const handleShare = () => {
+  //   const today = new Date();
+  //   const tanggalLengkap = today.toLocaleDateString("id-ID", {
+  //     weekday: "long",
+  //     day: "numeric",
+  //     month: "long",
+  //     year: "numeric",
+  //   });
+
+  //   const groups = {
+  //     Hadir: [],
+  //     Izin: [],
+  //     Sakit: [],
+  //     Alpa: [],
+  //   };
+
+  //   formData.forEach((item) => {
+  //     const status = item.status;
+  //     if (status && groups[status]) {
+  //       groups[status].push({
+  //         nama: item.nama_lengkap,
+  //         keterangan: item.keterangan,
+  //       });
+  //     }
+  //   });
+
+  //   let message = `📅 *Rekap Absensi ${kegiatan.nama_kegiatan}*\n`;
+  //   message += `*Tanggal:* ${tanggalLengkap}\n`;
+
+  //   if (tipe === "SEKOLAH" && kelas) {
+  //     message += `*Kelas:* ${kelas.nama_kelas}\n`;
+  //   } else if (tipe === "PONDOK" && kamar) {
+  //     message += `*Kamar:* ${kamar.nama_kamar}\n`;
+  //   }
+
+  //   message += `\n`;
+
+  //   const order = ["Hadir", "Izin", "Sakit", "Alpa"];
+  //   let totalAbsensi = 0;
+
+  //   order.forEach((kategori) => {
+  //     const list = groups[kategori];
+  //     if (list.length > 0) {
+  //       let emoji = "📋";
+  //       switch (kategori) {
+  //         case "Hadir":
+  //           emoji = "✅";
+  //           break;
+  //         case "Izin":
+  //           emoji = "📋";
+  //           break;
+  //         case "Sakit":
+  //           emoji = "🤒";
+  //           break;
+  //         case "Alpa":
+  //           emoji = "❌";
+  //           break;
+  //       }
+
+  //       message += `${emoji} *${kategori}*\n`;
+  //       list.forEach((item) => {
+  //         if (item.keterangan) {
+  //           message += `- ${item.nama} (${item.keterangan})\n`;
+  //         } else {
+  //           message += `- ${item.nama}\n`;
+  //         }
+  //       });
+  //       message += `\n`;
+  //       totalAbsensi += list.length;
+  //     }
+  //   });
+
+  //   const siswaTanpaStatus = formData.filter((item) => !item.status).length;
+
+  //   if (siswaTanpaStatus > 0) {
+  //     message += `📭 *Belum Diabsen:* ${siswaTanpaStatus} siswa\n\n`;
+  //   }
+
+  //   const summary = order
+  //     .map((kategori) => {
+  //       const count = groups[kategori].length;
+  //       return `${kategori}: ${count}`;
+  //     })
+  //     .join(" | ");
+
+  //   message += `📊 *Ringkasan:*\n${summary}`;
+  //   message += `\nTotal Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
+
+  //   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+  //     message
+  //   )}`;
+  //   window.open(whatsappUrl, "_blank");
+  // };
+
+  const generateWhatsAppText = () => {
     const today = new Date();
     const tanggalLengkap = today.toLocaleDateString("id-ID", {
       weekday: "long",
@@ -237,9 +338,8 @@ const AbsensiKegiatan = () => {
     };
 
     formData.forEach((item) => {
-      const status = item.status;
-      if (status && groups[status]) {
-        groups[status].push({
+      if (item.status && groups[item.status]) {
+        groups[item.status].push({
           nama: item.nama_lengkap,
           keterangan: item.keterangan,
         });
@@ -263,55 +363,48 @@ const AbsensiKegiatan = () => {
     order.forEach((kategori) => {
       const list = groups[kategori];
       if (list.length > 0) {
-        let emoji = "📋";
-        switch (kategori) {
-          case "Hadir":
-            emoji = "✅";
-            break;
-          case "Izin":
-            emoji = "📋";
-            break;
-          case "Sakit":
-            emoji = "🤒";
-            break;
-          case "Alpa":
-            emoji = "❌";
-            break;
-        }
+        const emoji =
+          kategori === "Hadir"
+            ? "✅"
+            : kategori === "Izin"
+            ? "📋"
+            : kategori === "Sakit"
+            ? "🤒"
+            : "❌";
 
         message += `${emoji} *${kategori}*\n`;
         list.forEach((item) => {
-          if (item.keterangan) {
-            message += `- ${item.nama} (${item.keterangan})\n`;
-          } else {
-            message += `- ${item.nama}\n`;
-          }
+          message += item.keterangan
+            ? `- ${item.nama} (${item.keterangan})\n`
+            : `- ${item.nama}\n`;
         });
         message += `\n`;
         totalAbsensi += list.length;
       }
     });
 
-    const siswaTanpaStatus = formData.filter((item) => !item.status).length;
-
-    if (siswaTanpaStatus > 0) {
-      message += `📭 *Belum Diabsen:* ${siswaTanpaStatus} siswa\n\n`;
+    const belum = formData.filter((i) => !i.status).length;
+    if (belum > 0) {
+      message += `📭 *Belum Diabsen:* ${belum} siswa\n\n`;
     }
 
-    const summary = order
-      .map((kategori) => {
-        const count = groups[kategori].length;
-        return `${kategori}: ${count}`;
-      })
-      .join(" | ");
-
-    message += `📊 *Ringkasan:*\n${summary}`;
+    message += `📊 *Ringkasan:*\n`;
+    message += order.map((k) => `${k}: ${groups[k].length}`).join(" | ");
     message += `\nTotal Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
 
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      message
+    return message;
+  };
+
+  const handleSendWhatsApp = () => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      waMessage
     )}`;
-    window.open(whatsappUrl, "_blank");
+    window.open(url, "_blank"); // USER gesture → Safari aman
+  };
+
+  const handleCopyText = async () => {
+    await navigator.clipboard.writeText(waMessage);
+    alert("📋 Teks berhasil disalin");
   };
 
   const handleBack = () => {
@@ -882,6 +975,143 @@ const AbsensiKegiatan = () => {
             </button>
           </div>
         </form>
+      )}
+
+      {/* modal */}
+      {isPreviewOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
+            padding: "1rem",
+          }}
+          onClick={(e) =>
+            e.target === e.currentTarget && setIsPreviewOpen(false)
+          }
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "12px",
+              maxWidth: "600px",
+              width: "100%",
+              padding: "1.5rem",
+              boxShadow: "8px 8px 0 #000",
+              border: "3px solid #000",
+            }}
+          >
+            <h3 style={{ marginBottom: "1rem", fontWeight: 800 }}>
+              📤 Preview Pesan WhatsApp
+            </h3>
+
+            <textarea
+              readOnly
+              value={waMessage}
+              style={{
+                width: "100%",
+                minHeight: "250px",
+                padding: "0.8rem",
+                border: "2px solid #000",
+                borderRadius: "8px",
+                fontSize: "0.85rem",
+                marginBottom: "1rem",
+                resize: "vertical",
+              }}
+            />
+            <p>
+              Silahkan tekan "Salin Teks" jika tombol "Kirim Ke Whatsapp" tidak
+              berfungsi, dan paste manual ke dalam grub Whatsapp.{" "}
+            </p>
+
+            {/* <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={handleSendWhatsApp}
+                style={{
+                  background: "#25D366",
+                  color: "#fff",
+                  border: "2px solid #000",
+                  padding: "0.6rem 1rem",
+                  borderRadius: "6px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📲 Kirim ke WhatsApp
+              </button>
+
+              <button
+                onClick={handleCopyText}
+                style={{
+                  background: "#3b82f6",
+                  color: "#fff",
+                  border: "2px solid #000",
+                  padding: "0.6rem 1rem",
+                  borderRadius: "6px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📋 Salin Teks
+              </button>
+
+              <button
+                onClick={() => setIsPreviewOpen(false)}
+                style={{
+                  background: "#6b7280",
+                  color: "#fff",
+                  border: "2px solid #000",
+                  padding: "0.6rem 1rem",
+                  borderRadius: "6px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ❌ Tutup
+              </button>
+            </div> */}
+
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <button onClick={handleCopyText} className="submit-button">
+                📋 Salin Teks
+              </button>
+
+              <button
+                onClick={handleSendWhatsApp}
+                className="submit-button"
+                style={{ background: "#25D366" }}
+              >
+                📤 Kirim ke WhatsApp
+              </button>
+
+              <button
+                onClick={() => setIsPreviewOpen(false)}
+                className="submit-button"
+                style={{ background: "#6b7280" }}
+              >
+                ✖ Tutup
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

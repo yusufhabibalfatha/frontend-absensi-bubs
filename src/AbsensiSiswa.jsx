@@ -14,6 +14,9 @@ export default function AbsensiSiswa() {
   const [scanMessage, setScanMessage] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [editingKeterangan, setEditingKeterangan] = useState(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [whatsappMessage, setWhatsappMessage] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef(null);
@@ -179,41 +182,190 @@ export default function AbsensiSiswa() {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setSubmitLoading(true);
+  //   setError(null);
+  //   setSuccessMessage(null);
+  //   setScanMessage(null);
+
+  //   try {
+  //     const url = `${
+  //       import.meta.env.VITE_API_URL
+  //     }/absensi-bubs/insert/absensi-sekolah`;
+
+  //     const response = await axios.post(url, formData, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     const result = response.data;
+
+  //     if (result.success) {
+  //       setSuccessMessage("Absensi berhasil disimpan!");
+  //     } else {
+  //       throw new Error(result.message || "Gagal menyimpan absensi");
+  //     }
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || err.message);
+  //   } finally {
+  //     setSubmitLoading(false);
+  //   }
+
+  //   handleShare();
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoading(true);
     setError(null);
     setSuccessMessage(null);
-    setScanMessage(null);
 
     try {
       const url = `${
         import.meta.env.VITE_API_URL
       }/absensi-bubs/insert/absensi-sekolah`;
+      const response = await axios.post(url, formData);
 
-      const response = await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const result = response.data;
-
-      if (result.success) {
+      if (response.data.success) {
         setSuccessMessage("Absensi berhasil disimpan!");
+
+        // 🔥 generate & tampilkan modal
+        const message = generateWhatsappMessage();
+        setWhatsappMessage(message);
+        setIsShareModalOpen(true);
       } else {
-        throw new Error(result.message || "Gagal menyimpan absensi");
+        throw new Error("asdsad", response.data.message);
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      setError(err.message);
     } finally {
       setSubmitLoading(false);
     }
-
-    handleShare();
   };
 
-  const handleShare = () => {
+  const sendToWhatsapp = () => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      whatsappMessage
+    )}`;
+    window.open(url, "_blank"); // aman Safari
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(whatsappMessage);
+      alert("✅ Teks berhasil disalin");
+    } catch {
+      alert("❌ Gagal menyalin teks");
+    }
+  };
+
+  // const handleShare = () => {
+  //   const dataTambahan = {
+  //     guruMapel: guru,
+  //     kelas: location.state.kelas,
+  //     hari: location.state.hari,
+  //     mapel: location.state.mapel,
+  //   };
+
+  //   const today = new Date();
+  //   const tanggalLengkap = today.toLocaleDateString("id-ID", {
+  //     weekday: "long",
+  //     day: "numeric",
+  //     month: "long",
+  //     year: "numeric",
+  //   });
+
+  //   const groups = {
+  //     Hadir: [],
+  //     Izin: [],
+  //     Sakit: [],
+  //     Alpa: [],
+  //   };
+
+  //   formData.forEach((item) => {
+  //     const status = item.status;
+  //     if (status && groups[status]) {
+  //       groups[status].push({
+  //         nama: item.nama_lengkap,
+  //         keterangan: item.keterangan,
+  //       });
+  //     }
+  //   });
+
+  //   let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
+  //   message += `*Kelas:* ${dataTambahan.kelas}\n`;
+  //   if (dataTambahan.mapel) {
+  //     message += `*Mapel:* ${dataTambahan.mapel}\n`;
+  //   }
+
+  //   if (dataTambahan.guruMapel) {
+  //     message += `*Guru:* ${dataTambahan.guruMapel}\n`;
+  //   }
+  //   // message += `*Tanggal:* ${tanggalLengkap}\n`;
+
+  //   message += `\n`;
+
+  //   const order = ["Hadir", "Izin", "Sakit", "Alpa"];
+  //   let totalAbsensi = 0;
+
+  //   order.forEach((kategori) => {
+  //     const list = groups[kategori];
+  //     if (list.length > 0) {
+  //       let emoji = "📋";
+  //       switch (kategori) {
+  //         case "Hadir":
+  //           emoji = "✅";
+  //           break;
+  //         case "Izin":
+  //           emoji = "📋";
+  //           break;
+  //         case "Sakit":
+  //           emoji = "🤒";
+  //           break;
+  //         case "Alpa":
+  //           emoji = "❌";
+  //           break;
+  //       }
+
+  //       message += `${emoji} *${kategori}*\n`;
+  //       list.forEach((item) => {
+  //         if (item.keterangan) {
+  //           message += `- ${item.nama} - (${item.keterangan})\n`;
+  //         } else {
+  //           message += `- ${item.nama}\n`;
+  //         }
+  //       });
+  //       message += `\n`;
+  //       totalAbsensi += list.length;
+  //     }
+  //   });
+
+  //   // Hitung siswa tanpa status
+  //   const siswaTanpaStatus = formData.filter((item) => !item.status).length;
+
+  //   if (siswaTanpaStatus > 0) {
+  //     message += `📭 *Belum Diabsen:* ${siswaTanpaStatus} siswa\n\n`;
+  //   }
+
+  //   const summary = order
+  //     .map((kategori) => {
+  //       const count = groups[kategori].length;
+  //       return `${kategori}: ${count}`;
+  //     })
+  //     .join(" | ");
+
+  //   message += `📊 *Ringkasan:*\n${summary}`;
+  //   message += `\nTotal Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
+
+  //   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+  //     message
+  //   )}`;
+  //   window.location.href = whatsappUrl;
+  // };
+
+  const generateWhatsappMessage = () => {
     const dataTambahan = {
       guruMapel: guru,
       kelas: location.state.kelas,
@@ -237,17 +389,18 @@ export default function AbsensiSiswa() {
     };
 
     formData.forEach((item) => {
-      const status = item.status;
-      if (status && groups[status]) {
-        groups[status].push({
+      if (item.status && groups[item.status]) {
+        groups[item.status].push({
           nama: item.nama_lengkap,
           keterangan: item.keterangan,
         });
       }
     });
 
-    let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
-    message += `*Kelas:* ${dataTambahan.kelas}\n`;
+    // let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
+    let message = `📅 *Absensi Siswa ${dataTambahan.kelas}*\n`;
+    message += `*Tanggal:* ${tanggalLengkap}\n`;
+
     if (dataTambahan.mapel) {
       message += `*Mapel:* ${dataTambahan.mapel}\n`;
     }
@@ -255,7 +408,6 @@ export default function AbsensiSiswa() {
     if (dataTambahan.guruMapel) {
       message += `*Guru:* ${dataTambahan.guruMapel}\n`;
     }
-    // message += `*Tanggal:* ${tanggalLengkap}\n`;
 
     message += `\n`;
 
@@ -265,56 +417,37 @@ export default function AbsensiSiswa() {
     order.forEach((kategori) => {
       const list = groups[kategori];
       if (list.length > 0) {
-        let emoji = "📋";
-        switch (kategori) {
-          case "Hadir":
-            emoji = "✅";
-            break;
-          case "Izin":
-            emoji = "📋";
-            break;
-          case "Sakit":
-            emoji = "🤒";
-            break;
-          case "Alpa":
-            emoji = "❌";
-            break;
-        }
+        const emojiMap = {
+          Hadir: "✅",
+          Izin: "📋",
+          Sakit: "🤒",
+          Alpa: "❌",
+        };
 
-        message += `${emoji} *${kategori}*\n`;
+        message += `${emojiMap[kategori]} *${kategori}*\n`;
+
         list.forEach((item) => {
-          if (item.keterangan) {
-            message += `- ${item.nama} - (${item.keterangan})\n`;
-          } else {
-            message += `- ${item.nama}\n`;
-          }
+          message += item.keterangan
+            ? `- ${item.nama} (${item.keterangan})\n`
+            : `- ${item.nama}\n`;
         });
+
         message += `\n`;
         totalAbsensi += list.length;
       }
     });
 
-    // Hitung siswa tanpa status
-    const siswaTanpaStatus = formData.filter((item) => !item.status).length;
-
-    if (siswaTanpaStatus > 0) {
-      message += `📭 *Belum Diabsen:* ${siswaTanpaStatus} siswa\n\n`;
+    const belum = formData.filter((item) => !item.status).length;
+    if (belum > 0) {
+      message += `📭 *Belum Diabsen:* ${belum} siswa\n\n`;
     }
 
-    const summary = order
-      .map((kategori) => {
-        const count = groups[kategori].length;
-        return `${kategori}: ${count}`;
-      })
-      .join(" | ");
+    const summary = order.map((k) => `${k}: ${groups[k].length}`).join(" | ");
 
-    message += `📊 *Ringkasan:*\n${summary}`;
-    message += `\nTotal Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
+    message += `📊 *Ringkasan:*\n${summary}\n`;
+    message += `Total Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
 
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      message
-    )}`;
-    window.location.href = whatsappUrl;
+    return message;
   };
 
   const handleBack = () => {
@@ -851,6 +984,83 @@ export default function AbsensiSiswa() {
             )}
           </div>
         </form>
+      )}
+
+      {isShareModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 2000,
+            padding: "1rem",
+          }}
+          onClick={(e) =>
+            e.target === e.currentTarget && setIsShareModalOpen(false)
+          }
+        >
+          <div
+            style={{
+              background: "white",
+              borderRadius: "12px",
+              maxWidth: "600px",
+              width: "100%",
+              padding: "1.5rem",
+            }}
+          >
+            <h3 style={{ marginBottom: "0.5rem" }}>
+              📤 Preview Pesan WhatsApp
+            </h3>
+
+            <textarea
+              readOnly
+              value={whatsappMessage}
+              style={{
+                width: "100%",
+                minHeight: "250px",
+                marginBottom: "1rem",
+                padding: "0.8rem",
+                fontSize: "0.85rem",
+              }}
+            />
+            <p>
+              Silahkan tekan "Salin Teks" jika tombol "Kirim Ke Whatsapp" tidak
+              berfungsi, dan paste manual ke dalam grub Whatsapp.{" "}
+            </p>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <button onClick={copyToClipboard} className="submit-button">
+                📋 Salin Teks
+              </button>
+
+              <button
+                onClick={sendToWhatsapp}
+                className="submit-button"
+                style={{ background: "#25D366" }}
+              >
+                📤 Kirim ke WhatsApp
+              </button>
+
+              <button
+                onClick={() => setIsShareModalOpen(false)}
+                className="submit-button"
+                style={{ background: "#6b7280" }}
+              >
+                ✖ Tutup
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
