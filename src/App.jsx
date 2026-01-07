@@ -23,6 +23,7 @@ import TugasSiswa from "./components/TugasSiswa";
 import MateriSiswa from "./components/MateriSiswa";
 import SubmissionList from "./components/SubmissionList";
 import "./style/styles.css";
+import DownloadQR from "./pages/Download-QR";
 
 function App() {
   return (
@@ -54,6 +55,10 @@ function App() {
 
         <Route path="/kegiatan/absen" element={<AbsenLayout />}>
           <Route index element={<AbsensiKegiatan />} />
+        </Route>
+
+        <Route path="/download-qr" element={<AbsenLayout />}>
+          <Route index element={<DownloadQR />} />
         </Route>
 
         {/* Route untuk Classroom System */}

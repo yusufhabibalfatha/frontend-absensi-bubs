@@ -9,3 +9,7 @@ export const handleKegiatan = (navigate) => {
 export const handleClassroom = (navigate) => {
   navigate("/login");
 };
+
+export const handleDownloadQR = (navigate) => {
+  navigate("/download-qr");
+};

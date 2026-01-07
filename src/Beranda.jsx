@@ -3,6 +3,7 @@ import {
   handleMasuk,
   handleKegiatan,
   handleClassroom,
+  handleDownloadQR,
 } from "./utility/BerandaUtility";
 import "./style/styles.css";
 
@@ -35,10 +36,18 @@ export default function Beranda() {
         </button>
 
         <button
-          className="btn btn-secondary"
+          disabled
+          className="btn btn-disabled"
           onClick={() => handleClassroom(navigate)}
         >
           Classroom
+        </button>
+
+        <button
+          onClick={() => handleDownloadQR(navigate)}
+          className="btn btn-secondary"
+        >
+          QR Code Siswa
         </button>
       </div>
     </div>
