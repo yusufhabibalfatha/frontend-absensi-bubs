@@ -1,4 +1,5 @@
-/* styles.css */
+/* ==== root ==== */
+/* ==== root ==== */
 :root {
   --primary-blue: #2563eb;
   --secondary-blue: #3b82f6;
@@ -28,9 +29,7 @@ body {
 }
 
 /* Layout Styles */
-.beranda-layout,
-.pilih-layout,
-.absen-layout {
+.beranda-layout {
   min-height: 100vh;
   padding: 2rem;
   background: repeating-linear-gradient(
@@ -41,7 +40,11 @@ body {
     rgba(59, 130, 246, 0.05) 20px
   );
 }
+/* ==== root ==== */
+/* ==== root ==== */
 
+/* ===== Beranda.jsx===== */
+/* ===== Beranda.jsx===== */
 /* Card Container */
 .card {
   background: var(--white);
@@ -209,6 +212,8 @@ p {
     font-size: 3rem;
   }
 }
+/* ===== Beranda.jsx===== */
+/* ===== Beranda.jsx===== */
 
 /* Neo-brutalism additional touches */
 .neo-border {

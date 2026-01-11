@@ -1,16 +1,6 @@
-// App.jsx (tambahkan import dan routes baru)
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PilihLayout from "./layouts/PilihLayout";
-import NotFound from "./components/NotFound";
-import AbsenLayout from "./layouts/AbsenLayout";
-import PilihMapel from "./PilihMapel";
-import AbsensiSiswa from "./AbsensiSiswa";
 import BerandaLayout from "./layouts/BerandaLayout";
-import Beranda from "./Beranda";
-import PilihKegiatan from "./PilihKegiatan";
-import PilihKelas from "./PilihKelas";
-import PilihKamar from "./PilihKamar";
-import AbsensiKegiatan from "./AbsensiKegiatan";
+import NotFound from "./components/NotFound";
 import Login from "./components/Login";
 import DashboardGuru from "./components/DashboardGuru";
 import DashboardSiswa from "./components/DashboardSiswa";
@@ -22,8 +12,15 @@ import MateriGuru from "./components/MateriGuru";
 import TugasSiswa from "./components/TugasSiswa";
 import MateriSiswa from "./components/MateriSiswa";
 import SubmissionList from "./components/SubmissionList";
-import "./style/styles.css";
+import PilihMapel from "./PilihMapel";
+import AbsensiSiswa from "./AbsensiSiswa";
+import Beranda from "./Beranda";
+import PilihKegiatan from "./PilihKegiatan";
+import PilihKelas from "./PilihKelas";
+import PilihKamar from "./PilihKamar";
+import AbsensiKegiatan from "./AbsensiKegiatan";
 import DownloadQR from "./pages/Download-QR";
+import "./style/styles.css";
 
 function App() {
   return (
@@ -33,11 +30,11 @@ function App() {
           <Route index element={<Beranda />} />
         </Route>
 
-        <Route path="/pilih" element={<PilihLayout />}>
+        <Route path="/pilih" element={<BerandaLayout />}>
           <Route index element={<PilihMapel />} />
         </Route>
 
-        <Route path="/absen" element={<AbsenLayout />}>
+        <Route path="/absen" element={<BerandaLayout />}>
           <Route index element={<AbsensiSiswa />} />
         </Route>
 
@@ -53,11 +50,11 @@ function App() {
           <Route index element={<PilihKamar />} />
         </Route>
 
-        <Route path="/kegiatan/absen" element={<AbsenLayout />}>
+        <Route path="/kegiatan/absen" element={<BerandaLayout />}>
           <Route index element={<AbsensiKegiatan />} />
         </Route>
 
-        <Route path="/download-qr" element={<AbsenLayout />}>
+        <Route path="/download-qr" element={<BerandaLayout />}>
           <Route index element={<DownloadQR />} />
         </Route>
 

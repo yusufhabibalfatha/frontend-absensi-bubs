@@ -336,6 +336,21 @@
   font-weight: 800;
 }
 
+.siswa-card[data-status="Terlambat"] {
+  border-color: #b45309;
+}
+
+.siswa-card[data-status="Terlambat"]::before {
+  background: #b45309;
+}
+
+.siswa-card[data-status="Terlambat"] .siswa-nama {
+  background: #feeada;
+  color: #b45309;
+  border: 2px solid #b45309;
+  font-weight: 800;
+}
+
 /* Status badge di nama */
 .siswa-nama::after {
   content: "";
@@ -368,6 +383,11 @@
 .siswa-card[data-status="Alpa"] .siswa-nama::after {
   content: "ALPA";
   background: #6b7280;
+  color: white;
+}
+.siswa-card[data-status="Terlambat"] .siswa-nama::after {
+  content: "TERLAMBAT";
+  background: #b45309;
   color: white;
 }
 
@@ -416,6 +436,10 @@
   color: #374151;
   border-color: #374151;
 }
+.status-terlambat {
+  color: #b45309; /* border & text default */
+  border-color: #b45309;
+}
 
 /* Selected State untuk Options */
 .status-option:has(.status-radio:checked) {
@@ -445,6 +469,11 @@
   border-color: #374151;
 }
 
+.status-terlambat:has(.status-radio:checked) {
+  background: #f97316; /* background saat dipilih */
+  border-color: #b45309;
+}
+
 /* Hover effects untuk options */
 .status-option:hover {
   transform: translateY(-1px);
@@ -464,6 +493,9 @@
 
 .status-alpa:hover {
   background: #f3f4f6;
+}
+.status-terlambat:hover {
+  background: #fff7ed; /* versi lebih terang saat hover */
 }
 
 /* Form Actions */

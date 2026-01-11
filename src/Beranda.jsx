@@ -1,38 +1,23 @@
 import { useNavigate } from "react-router-dom";
-import {
-  handleMasuk,
-  handleKegiatan,
-  handleClassroom,
-  handleDownloadQR,
-} from "./utility/BerandaUtility";
 import "./style/styles.css";
+import VersionApp from "./components/VersionApp";
 
 export default function Beranda() {
   const navigate = useNavigate();
 
-  const versionApp = "version app : v1";
-
   return (
     <div className="card">
-      <h1>Selamat Datang di Aplikasi Sekolah</h1>
-      <SchoolList />
-
-      <p>
-        Platform digital untuk mendukung kegiatan belajar mengajar dengan
-        fitur-fitur yang memudahkan siswa dan guru.
-      </p>
+      <HeadBeranda />
 
       <div className="button-group">
-        <button
-          className="btn btn-primary"
-          onClick={() => handleMasuk(navigate)}
-        >
+        <button className="btn btn-primary" onClick={() => navigate("/pilih")}>
           Absen Sekolah
         </button>
 
         <button
-          className="btn btn-secondary"
-          onClick={() => handleKegiatan(navigate)}
+          disabled
+          className="btn btn-disabled"
+          onClick={() => navigate("/kegiatan")}
         >
           Absen Kegiatan
         </button>
@@ -40,29 +25,38 @@ export default function Beranda() {
         <button
           disabled
           className="btn btn-disabled"
-          onClick={() => handleClassroom(navigate)}
+          onClick={() => navigate("/login")}
         >
           Classroom
         </button>
 
         <button
-          onClick={() => handleDownloadQR(navigate)}
-          className="btn btn-secondary"
+          disabled
+          onClick={() => navigate("/download-qr")}
+          className="btn btn-disabled"
         >
           QR Code Siswa
         </button>
       </div>
-      <p style={{ textAlign: "center", fontSize: "9px" }}>{versionApp}</p>
+      <VersionApp />
     </div>
   );
 }
 
-function SchoolList() {
+function HeadBeranda() {
   return (
-    <div className="school-decoration">
-      <div className="decoration-item">📚</div>
-      <div className="decoration-item">✏️</div>
-      <div className="decoration-item">🎓</div>
-    </div>
+    <>
+      <h1>Selamat Datang di Aplikasi Sekolah</h1>
+
+      <div className="school-decoration">
+        <div className="decoration-item">📚</div>
+        <div className="decoration-item">✏️</div>
+        <div className="decoration-item">🎓</div>
+      </div>
+      <p>
+        Platform digital untuk mendukung kegiatan belajar mengajar dengan
+        fitur-fitur yang memudahkan siswa dan guru.
+      </p>
+    </>
   );
 }

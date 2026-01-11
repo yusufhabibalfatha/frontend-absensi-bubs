@@ -6,40 +6,24 @@ function DownloadQR() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(
-        "https://apibubs.sdit.web.id/wp-json/absensi-bubs/v1/download-qr"
-      );
-
-      if (!response.ok) {
-        throw new Error("Gagal mengambil data");
-      }
-
+      const url = `${import.meta.env.VITE_API_URL}/absensi-bubs/v1/download-qr`;
+      const response = await fetch(url);
       const data = await response.json();
 
+      console.log(data);
+
       if (!data.success || !data.zip_path) {
-        throw new Error("Zip path tidak ditemukan");
+        throw new Error("Zip URL tidak ditemukan");
       }
 
-      /**
-       * zip_path dari backend:
-       * /home/sditwebi/apibubs.sdit.web.id/wp-content/uploads/qr/qr.zip
-       */
-
-      // 1. Hilangkan server path
-      const publicPath = data.zip_path.replace(/^\/home\/sditwebi\//, "");
-
-      // 2. Tambahkan protocol
-      const zipUrl = `https://${publicPath}`;
-
-      // Trigger download
       const a = document.createElement("a");
-      a.href = zipUrl;
+      a.href = data.zip_path;
       a.download = "qr.zip";
       document.body.appendChild(a);
       a.click();
       a.remove();
-    } catch (error) {
-      console.error("Download error:", error);
+    } catch (err) {
+      console.error(err);
       alert("Gagal mendownload QR");
     }
   };

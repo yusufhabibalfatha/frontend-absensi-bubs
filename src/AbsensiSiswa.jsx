@@ -1,8 +1,13 @@
-import axios from "axios";
-import { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import QRScanner from "./components/QRScanner";
+import AbsensiSiswaStatistic from "./components/AbsensiSiswaStatistic";
+import AbsensiSiswaInfoCard from "./components/AbsensiSiswaInfoCard";
+import AbsensiSiswaInfoCardModalMateri from "./components/AbsensiSiswaInfoCardModalMateri";
+import AbsensiSiswaEditingKeteranganModal from "./components/AbsensiSiswaEditingKeteranganModal";
+import AbsensiSiswaNavigationControl from "./components/AbsensiSiswaNavigationControl";
 import "./style/AbsensiSiswa.css";
+import AbsensiSiswaButtonGroup from "./components/AbsensiSiswaButtonGroup";
 
 export default function AbsensiSiswa() {
   const [loading, setLoading] = useState(false);
@@ -10,27 +15,23 @@ export default function AbsensiSiswa() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [formData, setFormData] = useState([]);
-  const [guru, setGuru] = useState(null);
   const [scanMessage, setScanMessage] = useState(null);
+
+  const [materi, setMateri] = useState(undefined);
+  const [materiModal, setMateriModal] = useState(false);
+
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [editingKeterangan, setEditingKeterangan] = useState(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [whatsappMessage, setWhatsappMessage] = useState("");
 
   const location = useLocation();
-  const navigate = useNavigate();
-  const containerRef = useRef(null);
-
-  // Scroll to top when component mounts or data loads
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   useEffect(() => {
-    fetchData();
+    fetchSiswaAbsensi();
   }, []);
 
-  const fetchData = async () => {
+  const fetchSiswaAbsensi = async () => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
@@ -39,38 +40,65 @@ export default function AbsensiSiswa() {
     try {
       const params = {
         kelas: location.state.kelas,
-        hari: location.state.hari,
-        mapel: location.state.mapel,
+        // hari: location.state.hari,
+        // mapel: location.state.mapel,
       };
+      const url = `${import.meta.env.VITE_NEW_API_URL}/siswa.php?id_kelas=${
+        params.kelas.id
+      }`;
+      const res = await fetch(url);
+      const data = await res.json();
 
-      const url = `${
-        import.meta.env.VITE_API_URL
-      }/absensi-bubs/v1/jadwal-siswa`;
-
-      const response = await axios.get(url, { params });
-
-      console.log("response ", response);
-
-      const result = response.data;
-
-      if (response.status !== 200) {
-        throw new Error(result.message);
+      if (!data.status) {
+        alert("Gagal mengambil data siswa yang diabsensi");
+        return;
       }
-
-      setFormData(result.data);
-      setGuru(result.kriteria.guru);
-
       window.scrollTo(0, 0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
+
+      // menghapus nilai aktif pada kolom status disetiap siswa
+      data.data.map((siswa) => {
+        siswa.status = "";
+        siswa.keterangan = "";
+      });
+
+      setFormData(data.data);
       setLoading(false);
+
+      // setGuru(result.kriteria.guru);
+      // setTeacher(data.data);
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan server");
     }
   };
 
-  const handleStatusChange = (id_siswa, newStatus) => {
+  const openKeteranganEditor = (id, status, currentKeterangan) => {
+    setEditingKeterangan({
+      id,
+      status,
+      keterangan: currentKeterangan || "",
+    });
+  };
+
+  // fungsi-fungsi memilih absensi
+  const handleCancelStatus = (id, nama) => {
     const updatedData = formData.map((item) => {
-      if (item.id_siswa === id_siswa) {
+      if (item.id === id) {
+        return { ...item, status: null, keterangan: null };
+      }
+      return item;
+    });
+    setSubmitLoading(false);
+    setFormData(updatedData);
+    setScanMessage(`❌ Status ${nama} berhasil dibatalkan`);
+
+    setTimeout(() => {
+      setScanMessage(null);
+    }, 3000);
+  };
+  const handleStatusChange = (id, newStatus) => {
+    const updatedData = formData.map((item) => {
+      if (item.id === id) {
         return {
           ...item,
           status: newStatus,
@@ -84,159 +112,66 @@ export default function AbsensiSiswa() {
     setScanMessage(null);
   };
 
-  // Batalkan status (set menjadi null)
-  const handleCancelStatus = (id_siswa, nama_siswa) => {
-    const updatedData = formData.map((item) => {
-      if (item.id_siswa === id_siswa) {
-        return { ...item, status: null, keterangan: null };
-      }
-      return item;
+  function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+  function diLuarJamPagiTarakan() {
+    const sekarang = new Date();
+
+    const formatter = new Intl.DateTimeFormat("id-ID", {
+      timeZone: "Asia/Makassar",
+      hour: "2-digit",
+      hour12: false,
     });
-    setFormData(updatedData);
-    setScanMessage(`❌ Status ${nama_siswa} berhasil dibatalkan`);
 
-    setTimeout(() => {
-      setScanMessage(null);
-    }, 3000);
-  };
+    const jam = parseInt(formatter.format(sekarang), 10);
 
-  // Handle QR Scan Result
-  const handleQRScan = (nik) => {
-    // Find student by NIK
-    const student = formData.find((item) => item.nik === nik);
+    // Jika BUKAN di antara jam 07 - 12
+    return !(jam >= 7 && jam < 12);
+  }
 
-    if (student) {
-      // Update status to "Hadir"
-      const updatedData = formData.map((item) => {
-        if (item.nik === nik) {
-          return { ...item, status: "Hadir", keterangan: null };
-        }
-        return item;
-      });
-
-      setFormData(updatedData);
-      setScanMessage(`✅ ${student.nama_lengkap} berhasil diabsensi!`);
-
-      setTimeout(() => {
-        setScanMessage(null);
-      }, 3000);
-    } else {
-      setScanMessage("❌ Siswa tidak ditemukan dalam kelas ini");
-
-      setTimeout(() => {
-        setScanMessage(null);
-      }, 3000);
-    }
-  };
-
-  const handleScanError = (errorMessage) => {
-    setScanMessage(errorMessage);
-
-    setTimeout(() => {
-      setScanMessage(null);
-    }, 3000);
-  };
-
-  const openScanner = () => {
-    setIsScannerOpen(true);
-    setScanMessage(null);
-  };
-
-  const closeScanner = () => {
-    setIsScannerOpen(false);
-  };
-
-  // Handle keterangan change
-  const handleKeteranganChange = (id_siswa, keterangan) => {
-    const updatedData = formData.map((item) => {
-      if (item.id_siswa === id_siswa) {
-        return { ...item, keterangan: keterangan || null };
-      }
-      return item;
-    });
-    setFormData(updatedData);
-  };
-
-  // Open keterangan editor
-  const openKeteranganEditor = (id_siswa, status, currentKeterangan) => {
-    setEditingKeterangan({
-      id_siswa,
-      status,
-      keterangan: currentKeterangan || "",
-    });
-  };
-
-  // Close keterangan editor
-  const closeKeteranganEditor = () => {
-    setEditingKeterangan(null);
-  };
-
-  // Save keterangan
-  const saveKeterangan = () => {
-    if (editingKeterangan) {
-      handleKeteranganChange(
-        editingKeterangan.id_siswa,
-        editingKeterangan.keterangan
-      );
-      setEditingKeterangan(null);
-    }
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setSubmitLoading(true);
-  //   setError(null);
-  //   setSuccessMessage(null);
-  //   setScanMessage(null);
-
-  //   try {
-  //     const url = `${
-  //       import.meta.env.VITE_API_URL
-  //     }/absensi-bubs/insert/absensi-sekolah`;
-
-  //     const response = await axios.post(url, formData, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     const result = response.data;
-
-  //     if (result.success) {
-  //       setSuccessMessage("Absensi berhasil disimpan!");
-  //     } else {
-  //       throw new Error(result.message || "Gagal menyimpan absensi");
-  //     }
-  //   } catch (err) {
-  //     setError(err.response?.data?.message || err.message);
-  //   } finally {
-  //     setSubmitLoading(false);
-  //   }
-
-  //   handleShare();
-  // };
-
+  // fungsi-fungsi submit absensi/form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoading(true);
     setError(null);
     setSuccessMessage(null);
 
+    const params = {
+      guru: location.state.guru,
+      mapel: location.state.mapel,
+    };
+
+    formData.map((siswa) => {
+      siswa.tanggal = getTodayDate();
+      siswa.id_guru_sekolah = params.guru.id;
+      siswa.id_mata_pelajaran = params.mapel.id;
+      materi ? (siswa.materi = materi) : (siswa.materi = null);
+    });
+
+    const payload = new FormData();
+    payload.append("data", JSON.stringify(formData));
+
     try {
-      const url = `${
-        import.meta.env.VITE_API_URL
-      }/absensi-bubs/insert/absensi-sekolah`;
-      const response = await axios.post(url, formData);
+      const url = `${import.meta.env.VITE_NEW_API_URL}/absen_sekolah.php`;
+      const res = await fetch(url, {
+        method: "POST",
+        body: payload,
+        credentials: "include",
+      });
+      const data = await res.json();
 
-      if (response.data.success) {
-        setSuccessMessage("Absensi berhasil disimpan!");
-
-        // 🔥 generate & tampilkan modal
+      if (data.status) {
         const message = generateWhatsappMessage();
         setWhatsappMessage(message);
         setIsShareModalOpen(true);
       } else {
-        throw new Error("asdsad", response.data.message);
+        throw new Error(data.message);
       }
     } catch (err) {
       setError(err.message);
@@ -244,130 +179,9 @@ export default function AbsensiSiswa() {
       setSubmitLoading(false);
     }
   };
-
-  const sendToWhatsapp = () => {
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      whatsappMessage
-    )}`;
-    window.open(url, "_blank"); // aman Safari
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(whatsappMessage);
-      alert("✅ Teks berhasil disalin");
-    } catch {
-      alert("❌ Gagal menyalin teks");
-    }
-  };
-
-  // const handleShare = () => {
-  //   const dataTambahan = {
-  //     guruMapel: guru,
-  //     kelas: location.state.kelas,
-  //     hari: location.state.hari,
-  //     mapel: location.state.mapel,
-  //   };
-
-  //   const today = new Date();
-  //   const tanggalLengkap = today.toLocaleDateString("id-ID", {
-  //     weekday: "long",
-  //     day: "numeric",
-  //     month: "long",
-  //     year: "numeric",
-  //   });
-
-  //   const groups = {
-  //     Hadir: [],
-  //     Izin: [],
-  //     Sakit: [],
-  //     Alpa: [],
-  //   };
-
-  //   formData.forEach((item) => {
-  //     const status = item.status;
-  //     if (status && groups[status]) {
-  //       groups[status].push({
-  //         nama: item.nama_lengkap,
-  //         keterangan: item.keterangan,
-  //       });
-  //     }
-  //   });
-
-  //   let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
-  //   message += `*Kelas:* ${dataTambahan.kelas}\n`;
-  //   if (dataTambahan.mapel) {
-  //     message += `*Mapel:* ${dataTambahan.mapel}\n`;
-  //   }
-
-  //   if (dataTambahan.guruMapel) {
-  //     message += `*Guru:* ${dataTambahan.guruMapel}\n`;
-  //   }
-  //   // message += `*Tanggal:* ${tanggalLengkap}\n`;
-
-  //   message += `\n`;
-
-  //   const order = ["Hadir", "Izin", "Sakit", "Alpa"];
-  //   let totalAbsensi = 0;
-
-  //   order.forEach((kategori) => {
-  //     const list = groups[kategori];
-  //     if (list.length > 0) {
-  //       let emoji = "📋";
-  //       switch (kategori) {
-  //         case "Hadir":
-  //           emoji = "✅";
-  //           break;
-  //         case "Izin":
-  //           emoji = "📋";
-  //           break;
-  //         case "Sakit":
-  //           emoji = "🤒";
-  //           break;
-  //         case "Alpa":
-  //           emoji = "❌";
-  //           break;
-  //       }
-
-  //       message += `${emoji} *${kategori}*\n`;
-  //       list.forEach((item) => {
-  //         if (item.keterangan) {
-  //           message += `- ${item.nama} - (${item.keterangan})\n`;
-  //         } else {
-  //           message += `- ${item.nama}\n`;
-  //         }
-  //       });
-  //       message += `\n`;
-  //       totalAbsensi += list.length;
-  //     }
-  //   });
-
-  //   // Hitung siswa tanpa status
-  //   const siswaTanpaStatus = formData.filter((item) => !item.status).length;
-
-  //   if (siswaTanpaStatus > 0) {
-  //     message += `📭 *Belum Diabsen:* ${siswaTanpaStatus} siswa\n\n`;
-  //   }
-
-  //   const summary = order
-  //     .map((kategori) => {
-  //       const count = groups[kategori].length;
-  //       return `${kategori}: ${count}`;
-  //     })
-  //     .join(" | ");
-
-  //   message += `📊 *Ringkasan:*\n${summary}`;
-  //   message += `\nTotal Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
-
-  //   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-  //     message
-  //   )}`;
-  //   window.location.href = whatsappUrl;
-  // };
-
   const generateWhatsappMessage = () => {
-    const dataTambahan = {
-      guruMapel: guru,
+    const params = {
+      guru: location.state.guru,
       kelas: location.state.kelas,
       hari: location.state.hari,
       mapel: location.state.mapel,
@@ -383,6 +197,7 @@ export default function AbsensiSiswa() {
 
     const groups = {
       Hadir: [],
+      Terlambat: [],
       Izin: [],
       Sakit: [],
       Alpa: [],
@@ -391,27 +206,31 @@ export default function AbsensiSiswa() {
     formData.forEach((item) => {
       if (item.status && groups[item.status]) {
         groups[item.status].push({
-          nama: item.nama_lengkap,
+          nama: item.nama,
           keterangan: item.keterangan,
         });
       }
     });
 
     // let message = `📅 *Absensi Siswa ${tanggalLengkap}*\n`;
-    let message = `📅 *Absensi Siswa ${dataTambahan.kelas}*\n`;
+    let message = `📅 *Absensi Siswa ${params.kelas.nama}*\n`;
     message += `*Tanggal:* ${tanggalLengkap}\n`;
 
-    if (dataTambahan.mapel) {
-      message += `*Mapel:* ${dataTambahan.mapel}\n`;
+    if (params.mapel.nama) {
+      message += `*Mapel:* ${params.mapel.nama}\n`;
     }
 
-    if (dataTambahan.guruMapel) {
-      message += `*Guru:* ${dataTambahan.guruMapel}\n`;
+    if (materi) {
+      message += `*Materi:* ${materi}\n`;
+    }
+
+    if (params.guru.nama) {
+      message += `*Guru:* ${params.guru.nama}\n`;
     }
 
     message += `\n`;
 
-    const order = ["Hadir", "Izin", "Sakit", "Alpa"];
+    const order = ["Hadir", "Terlambat", "Izin", "Sakit", "Alpa"];
     let totalAbsensi = 0;
 
     order.forEach((kategori) => {
@@ -419,6 +238,7 @@ export default function AbsensiSiswa() {
       if (list.length > 0) {
         const emojiMap = {
           Hadir: "✅",
+          Terlambat: "🐢",
           Izin: "📋",
           Sakit: "🤒",
           Alpa: "❌",
@@ -445,17 +265,80 @@ export default function AbsensiSiswa() {
     const summary = order.map((k) => `${k}: ${groups[k].length}`).join(" | ");
 
     message += `📊 *Ringkasan:*\n${summary}\n`;
-    message += `Total Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
+
+    const benarDiluarJam = diLuarJamPagiTarakan();
+
+    if (benarDiluarJam) {
+      message += `Total Diabsen: ${totalAbsensi} dari ${formData.length} siswa\n\n`;
+      message += `_via Bubs Absensi Digital_`;
+    } else {
+      message += `Total Diabsen: ${totalAbsensi} dari ${formData.length} siswa`;
+    }
 
     return message;
   };
 
-  const handleBack = () => {
-    navigate(-1);
+  // fungsi-fungsi scanner qr
+  const handleQRScan = (nik) => {
+    const student = formData.find((item) => item.nik === nik);
+
+    if (student) {
+      const updatedData = formData.map((item) => {
+        if (item.nik === nik) {
+          return { ...item, status: "Hadir", keterangan: null };
+        }
+        return item;
+      });
+
+      setFormData(updatedData);
+      setScanMessage(`✅ ${student.nama_lengkap} berhasil diabsensi!`);
+
+      setTimeout(() => {
+        setScanMessage(null);
+      }, 3000);
+    } else {
+      setScanMessage("❌ Siswa tidak ditemukan dalam kelas ini");
+
+      setTimeout(() => {
+        setScanMessage(null);
+      }, 3000);
+    }
   };
 
-  const handleRetry = () => {
-    fetchData();
+  // fungsi-fungsi modal tambah keterangan
+  const handleKeteranganChange = (id, keterangan) => {
+    const updatedData = formData.map((item) => {
+      if (item.id === id) {
+        return { ...item, keterangan: keterangan || null };
+      }
+      return item;
+    });
+    setFormData(updatedData);
+  };
+  const saveKeterangan = () => {
+    if (editingKeterangan) {
+      handleKeteranganChange(
+        editingKeterangan.id,
+        editingKeterangan.keterangan
+      );
+      setEditingKeterangan(null);
+    }
+  };
+
+  // fungsi-fungsi modal preview teks whatsapp
+  const sendToWhatsapp = () => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      whatsappMessage
+    )}`;
+    window.open(url, "_blank"); // aman Safari
+  };
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(whatsappMessage);
+      alert("✅ Teks berhasil disalin");
+    } catch {
+      alert("❌ Gagal menyalin teks");
+    }
   };
 
   // Hitung statistik
@@ -464,326 +347,56 @@ export default function AbsensiSiswa() {
     const izin = formData.filter((item) => item.status === "Izin").length;
     const sakit = formData.filter((item) => item.status === "Sakit").length;
     const alpa = formData.filter((item) => item.status === "Alpa").length;
+    const terlambat = formData.filter(
+      (item) => item.status === "Terlambat"
+    ).length;
     const belum = formData.filter((item) => !item.status).length;
 
-    return { hadir, izin, sakit, alpa, belum };
+    return { hadir, izin, sakit, alpa, terlambat, belum };
   };
-
   const stats = getStats();
 
   return (
-    <div className="absensi-container" ref={containerRef}>
-      {/* QR Scanner Modal */}
+    <div className="absensi-container">
       <QRScanner
         isOpen={isScannerOpen}
-        onClose={closeScanner}
+        onClose={() => setIsScannerOpen(false)}
         onScan={handleQRScan}
-        onError={handleScanError}
+        onError={() => setScanMessage("Scanner QR sedang error")}
       />
 
-      {/* Keterangan Editor Modal */}
       {editingKeterangan && (
-        <div
-          className="keterangan-modal"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1001,
-            padding: "1rem",
-          }}
-          onClick={(e) =>
-            e.target === e.currentTarget && closeKeteranganEditor()
-          }
-        >
-          <div
-            className="keterangan-editor"
-            style={{
-              background: "white",
-              border: "3px solid #000",
-              borderRadius: "12px",
-              padding: "1.5rem",
-              maxWidth: "500px",
-              width: "100%",
-              boxShadow: "8px 8px 0px #000",
-            }}
-          >
-            <h3
-              style={{
-                margin: "0 0 1rem 0",
-                color: "#000",
-                fontSize: "1.3rem",
-                fontWeight: "800",
-              }}
-            >
-              📝 Tambah Keterangan
-            </h3>
-
-            <p
-              style={{
-                margin: "0 0 1rem 0",
-                color: "#6b7280",
-                fontSize: "0.9rem",
-              }}
-            >
-              Tambahkan keterangan untuk status{" "}
-              <strong>{editingKeterangan.status}</strong>
-            </p>
-
-            <textarea
-              value={editingKeterangan.keterangan}
-              onChange={(e) =>
-                setEditingKeterangan({
-                  ...editingKeterangan,
-                  keterangan: e.target.value,
-                })
-              }
-              placeholder={`Contoh: ${getKeteranganContoh(
-                editingKeterangan.status
-              )}`}
-              style={{
-                width: "100%",
-                minHeight: "100px",
-                padding: "0.8rem",
-                border: "2px solid #000",
-                borderRadius: "8px",
-                fontSize: "0.9rem",
-                fontFamily: "inherit",
-                resize: "vertical",
-                marginBottom: "1rem",
-              }}
-              autoFocus
-            />
-
-            <div
-              style={{
-                display: "flex",
-                gap: "0.5rem",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                onClick={closeKeteranganEditor}
-                style={{
-                  background: "#6b7280",
-                  color: "white",
-                  border: "2px solid #000",
-                  borderRadius: "6px",
-                  padding: "0.6rem 1.2rem",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                  boxShadow: "2px 2px 0px #000",
-                }}
-              >
-                Batal
-              </button>
-
-              <button
-                onClick={saveKeterangan}
-                style={{
-                  background: "#10b981",
-                  color: "white",
-                  border: "2px solid #000",
-                  borderRadius: "6px",
-                  padding: "0.6rem 1.2rem",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                  boxShadow: "2px 2px 0px #000",
-                }}
-              >
-                💾 Simpan
-              </button>
-            </div>
-          </div>
-        </div>
+        <AbsensiSiswaEditingKeteranganModal
+          setEditingKeterangan={setEditingKeterangan}
+          editingKeterangan={editingKeterangan}
+          getKeteranganContoh={getKeteranganContoh}
+          saveKeterangan={saveKeterangan}
+        />
       )}
 
-      {/* Navigation Controls */}
-      <div className="navigation-controls">
-        <button
-          onClick={handleBack}
-          className="nav-button btn-back"
-          title="Kembali ke halaman sebelumnya"
-        >
-          ← Kembali
-        </button>
-        <h1 className="absensi-header">📋 Absensi Siswa</h1>
-        <div style={{ width: "100px" }}></div> {/* Spacer untuk balance */}
-      </div>
+      {materiModal && (
+        <AbsensiSiswaInfoCardModalMateri
+          setMateri={setMateri}
+          materi={materi}
+          setMateriModal={setMateriModal}
+        />
+      )}
 
-      {/* Info Card */}
-      <div className="info-card">
-        <div className="info-item">
-          <div className="info-icon">📅</div>
-          <div className="info-content">
-            <div className="info-label">Hari</div>
-            <div className="info-value">{location.state?.hari || "-"}</div>
-          </div>
-        </div>
+      <AbsensiSiswaNavigationControl />
+      <AbsensiSiswaInfoCard
+        location={location}
+        materi={materi}
+        setMateriModal={setMateriModal}
+      />
+      <AbsensiSiswaStatistic stats={stats} />
 
-        <div className="info-item">
-          <div className="info-icon">📚</div>
-          <div className="info-content">
-            <div className="info-label">Mata Pelajaran</div>
-            <div className="info-value">{location.state?.mapel || "-"}</div>
-          </div>
-        </div>
+      <AbsensiSiswaButtonGroup
+        setIsScannerOpen={setIsScannerOpen}
+        formData={formData}
+        setFormData={setFormData}
+        setScanMessage={setScanMessage}
+      />
 
-        <div className="info-item">
-          <div className="info-icon">🏫</div>
-          <div className="info-content">
-            <div className="info-label">Kelas</div>
-            <div className="info-value">{location.state?.kelas || "-"}</div>
-          </div>
-        </div>
-
-        <div className="info-item teacher-info">
-          <div className="info-icon">👨‍🏫</div>
-          <div className="info-content">
-            <div className="info-label">Guru Pengajar</div>
-            <div className="info-value">{guru || "Loading..."}</div>
-          </div>
-          <span className="status-badge status-active">Active</span>
-        </div>
-      </div>
-
-      {/* Statistics */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-          gap: "0.5rem",
-          margin: "1.5rem 0",
-        }}
-      >
-        <div
-          style={{
-            background: "#d1fae5",
-            border: "2px solid #10b981",
-            borderRadius: "8px",
-            padding: "0.8rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{ fontSize: "1.5rem", fontWeight: "800", color: "#065f46" }}
-          >
-            {stats.hadir}
-          </div>
-          <div
-            style={{ fontSize: "0.7rem", fontWeight: "600", color: "#065f46" }}
-          >
-            ✅ Hadir
-          </div>
-        </div>
-        <div
-          style={{
-            background: "#fef3c7",
-            border: "2px solid #f59e0b",
-            borderRadius: "8px",
-            padding: "0.8rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{ fontSize: "1.5rem", fontWeight: "800", color: "#92400e" }}
-          >
-            {stats.izin}
-          </div>
-          <div
-            style={{ fontSize: "0.7rem", fontWeight: "600", color: "#92400e" }}
-          >
-            📋 Izin
-          </div>
-        </div>
-        <div
-          style={{
-            background: "#fee2e2",
-            border: "2px solid #ef4444",
-            borderRadius: "8px",
-            padding: "0.8rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{ fontSize: "1.5rem", fontWeight: "800", color: "#991b1b" }}
-          >
-            {stats.sakit + stats.alpa}
-          </div>
-          <div
-            style={{ fontSize: "0.7rem", fontWeight: "600", color: "#991b1b" }}
-          >
-            ❌ Tidak Hadir
-          </div>
-        </div>
-        <div
-          style={{
-            background: "#f3f4f6",
-            border: "2px solid #6b7280",
-            borderRadius: "8px",
-            padding: "0.8rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{ fontSize: "1.5rem", fontWeight: "800", color: "#374151" }}
-          >
-            {stats.belum}
-          </div>
-          <div
-            style={{ fontSize: "0.7rem", fontWeight: "600", color: "#374151" }}
-          >
-            ⏳ Belum
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div
-        style={{
-          textAlign: "center",
-          margin: "1.5rem 0",
-        }}
-      >
-        <button
-          onClick={openScanner}
-          className="submit-button"
-          style={{
-            background: "var(--primary-blue)",
-            margin: "0.5rem",
-          }}
-        >
-          📷 Scan QR Code Siswa
-        </button>
-
-        <button
-          onClick={() => {
-            const updatedData = formData.map((item) => ({
-              ...item,
-              status: null,
-              keterangan: null,
-            }));
-            setFormData(updatedData);
-            setScanMessage("🔄 Status semua siswa berhasil direset");
-          }}
-          className="submit-button"
-          style={{
-            background: "var(--accent-yellow)",
-            color: "var(--black)",
-            margin: "0.5rem",
-          }}
-        >
-          🔄 Reset Semua
-        </button>
-      </div>
-
-      {/* Scan Message */}
       {scanMessage && (
         <div
           className={
@@ -796,19 +409,17 @@ export default function AbsensiSiswa() {
         </div>
       )}
 
-      {/* Loading State */}
       {loading && (
         <div className="loading-text loading-pulse">
           🔄 Sedang memuat data siswa...
         </div>
       )}
 
-      {/* Error State */}
       {error && (
         <div className="error-message">
           ❌ {error}
           <button
-            onClick={handleRetry}
+            onClick={() => fetchSiswaAbsensi()}
             className="retry-button"
             style={{ marginLeft: "1rem" }}
           >
@@ -817,22 +428,19 @@ export default function AbsensiSiswa() {
         </div>
       )}
 
-      {/* Success Message */}
       {successMessage && (
         <div className="success-message">✅ {successMessage}</div>
       )}
 
-      {/* Empty State */}
       {!loading && !error && formData.length === 0 && (
         <div className="empty-state">
           <p>📭 Tidak ada data siswa ditemukan</p>
-          <button onClick={handleRetry} className="retry-button">
+          <button onClick={() => fetchSiswaAbsensi()} className="retry-button">
             Muat Ulang Data
           </button>
         </div>
       )}
 
-      {/* Form Absensi */}
       {formData.length > 0 && (
         <form onSubmit={handleSubmit}>
           <div style={{ marginTop: "2rem" }}>
@@ -845,12 +453,12 @@ export default function AbsensiSiswa() {
                 fontWeight: "700",
               }}
             >
-              👥 Daftar Siswa - {formData.length} Siswa
+              👥 Terdaftar {formData.length} Siswa
             </h2>
 
             {formData.map((siswa) => (
               <div
-                key={siswa.id_siswa}
+                key={siswa.id}
                 className="siswa-card"
                 data-status={siswa.status || ""}
               >
@@ -863,7 +471,7 @@ export default function AbsensiSiswa() {
                     gap: "0.5rem",
                   }}
                 >
-                  <p className="siswa-nama">{siswa.nama_lengkap}</p>
+                  <p className="siswa-nama">{siswa.nama}</p>
 
                   {/* Keterangan Badge */}
                   {siswa.keterangan && (
@@ -881,7 +489,7 @@ export default function AbsensiSiswa() {
                       }}
                       onClick={() =>
                         openKeteranganEditor(
-                          siswa.id_siswa,
+                          siswa.id,
                           siswa.status,
                           siswa.keterangan
                         )
@@ -898,9 +506,7 @@ export default function AbsensiSiswa() {
                   {/* Tombol Batalkan Status */}
                   {siswa.status && (
                     <button
-                      onClick={() =>
-                        handleCancelStatus(siswa.id_siswa, siswa.nama_lengkap)
-                      }
+                      onClick={() => handleCancelStatus(siswa.id, siswa.nama)}
                       style={{
                         background: "#ef4444",
                         color: "white",
@@ -913,7 +519,7 @@ export default function AbsensiSiswa() {
                         fontSize: "0.7rem",
                         whiteSpace: "nowrap",
                       }}
-                      title={`Batalkan status ${siswa.status} untuk ${siswa.nama_lengkap}`}
+                      title={`Batalkan status ${siswa.status} untuk ${siswa.nama}`}
                     >
                       ❌ Batalkan
                     </button>
@@ -921,51 +527,53 @@ export default function AbsensiSiswa() {
                 </div>
 
                 <div className="status-options">
-                  {["Hadir", "Izin", "Sakit", "Alpa"].map((statusOption) => (
-                    <label
-                      key={statusOption}
-                      className={`status-option status-${statusOption.toLowerCase()}`}
-                    >
-                      <input
-                        type="radio"
-                        name={`status-${siswa.id_siswa}`}
-                        value={statusOption}
-                        checked={siswa.status === statusOption}
-                        onChange={(e) =>
-                          handleStatusChange(siswa.id_siswa, e.target.value)
-                        }
-                        className="status-radio"
-                      />
-                      {statusOption}
-
-                      {/* Tombol Keterangan untuk status yang dipilih */}
-                      {siswa.status === statusOption && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            openKeteranganEditor(
-                              siswa.id_siswa,
-                              statusOption,
-                              siswa.keterangan
-                            )
+                  {["Hadir", "Izin", "Sakit", "Alpa", "Terlambat"].map(
+                    (statusOption) => (
+                      <label
+                        key={statusOption}
+                        className={`status-option status-${statusOption.toLowerCase()}`}
+                      >
+                        <input
+                          type="radio"
+                          name={`status-${siswa.id}`}
+                          value={statusOption}
+                          checked={siswa.status === statusOption}
+                          onChange={(e) =>
+                            handleStatusChange(siswa.id, e.target.value)
                           }
-                          className="keterangan-button"
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            cursor: "pointer",
-                            fontSize: "0.8rem",
-                            marginLeft: "0.3rem",
-                            padding: "0.2rem",
-                            borderRadius: "4px",
-                          }}
-                          title="Tambah keterangan"
-                        >
-                          {siswa.keterangan ? "📝" : "✏️"}
-                        </button>
-                      )}
-                    </label>
-                  ))}
+                          className="status-radio"
+                        />
+                        {statusOption}
+
+                        {/* Tombol Keterangan untuk status yang dipilih */}
+                        {siswa.status === statusOption && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openKeteranganEditor(
+                                siswa.id,
+                                statusOption,
+                                siswa.keterangan
+                              )
+                            }
+                            className="keterangan-button"
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              cursor: "pointer",
+                              fontSize: "0.8rem",
+                              marginLeft: "0.3rem",
+                              padding: "0.2rem",
+                              borderRadius: "4px",
+                            }}
+                            title="Tambah keterangan"
+                          >
+                            {siswa.keterangan ? "📝" : "✏️"}
+                          </button>
+                        )}
+                      </label>
+                    )
+                  )}
                 </div>
               </div>
             ))}
@@ -1039,15 +647,15 @@ export default function AbsensiSiswa() {
                 flexWrap: "wrap",
               }}
             >
-              <button onClick={copyToClipboard} className="submit-button">
+              <button
+                onClick={copyToClipboard}
+                className="submit-button"
+                style={{ background: "#7e80f4ff" }}
+              >
                 📋 Salin Teks
               </button>
 
-              <button
-                onClick={sendToWhatsapp}
-                className="submit-button"
-                style={{ background: "#25D366" }}
-              >
+              <button onClick={sendToWhatsapp} className="submit-button">
                 📤 Kirim ke WhatsApp
               </button>
 
@@ -1066,7 +674,6 @@ export default function AbsensiSiswa() {
   );
 }
 
-// Helper function untuk contoh keterangan
 const getKeteranganContoh = (status) => {
   switch (status) {
     case "Izin":
@@ -1077,6 +684,8 @@ const getKeteranganContoh = (status) => {
       return "tidak ada kabar, terlambat terlalu lama, bolos";
     case "Hadir":
       return "hadir tepat waktu, hadir terlambat 15 menit";
+    case "Terlambat":
+      return "hadir terlambat 30 menit, hadir terlambat 1 jam";
     default:
       return "tulis keterangan tambahan...";
   }
