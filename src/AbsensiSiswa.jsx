@@ -238,7 +238,7 @@ export default function AbsensiSiswa() {
       if (list.length > 0) {
         const emojiMap = {
           Hadir: "✅",
-          Terlambat: "🐢",
+          Terlambat: "🕐",
           Izin: "📋",
           Sakit: "🤒",
           Alpa: "❌",
