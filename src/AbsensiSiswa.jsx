@@ -319,7 +319,7 @@ export default function AbsensiSiswa() {
     if (editingKeterangan) {
       handleKeteranganChange(
         editingKeterangan.id,
-        editingKeterangan.keterangan
+        editingKeterangan.keterangan,
       );
       setEditingKeterangan(null);
     }
@@ -328,7 +328,7 @@ export default function AbsensiSiswa() {
   // fungsi-fungsi modal preview teks whatsapp
   const sendToWhatsapp = () => {
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      whatsappMessage
+      whatsappMessage,
     )}`;
     window.open(url, "_blank"); // aman Safari
   };
@@ -348,13 +348,16 @@ export default function AbsensiSiswa() {
     const sakit = formData.filter((item) => item.status === "Sakit").length;
     const alpa = formData.filter((item) => item.status === "Alpa").length;
     const terlambat = formData.filter(
-      (item) => item.status === "Terlambat"
+      (item) => item.status === "Terlambat",
     ).length;
     const belum = formData.filter((item) => !item.status).length;
 
     return { hadir, izin, sakit, alpa, terlambat, belum };
   };
   const stats = getStats();
+
+  const belumDiabsen = formData.filter((item) => !item.status).length > 0;
+  const materiKosong = !materi || materi.trim() === "";
 
   return (
     <div className="absensi-container">
@@ -491,7 +494,7 @@ export default function AbsensiSiswa() {
                         openKeteranganEditor(
                           siswa.id,
                           siswa.status,
-                          siswa.keterangan
+                          siswa.keterangan,
                         )
                       }
                       title="Klik untuk edit keterangan"
@@ -553,7 +556,7 @@ export default function AbsensiSiswa() {
                               openKeteranganEditor(
                                 siswa.id,
                                 statusOption,
-                                siswa.keterangan
+                                siswa.keterangan,
                               )
                             }
                             className="keterangan-button"
@@ -572,7 +575,7 @@ export default function AbsensiSiswa() {
                           </button>
                         )}
                       </label>
-                    )
+                    ),
                   )}
                 </div>
               </div>
@@ -580,8 +583,67 @@ export default function AbsensiSiswa() {
           </div>
 
           {/* Form Actions */}
-          <div className="form-actions">
+          {/* <div className="form-actions">
             {!formData.filter((item) => !item.status).length > 0 && (
+              <button
+                type="submit"
+                disabled={submitLoading}
+                className="submit-button"
+              >
+                {submitLoading ? "💾 Menyimpan..." : "📤 Bagikan ke WhatsApp"}
+              </button>
+            )}
+          </div> */}
+          <div className="form-actions">
+            <div className="warning-text-absen">
+              {/* Warning jika masih ada siswa belum diabsen */}
+              {belumDiabsen && (
+                <p
+                  style={{
+                    color: "#dc2626",
+                    marginBottom: "0.4rem",
+                    fontWeight: "500",
+                    textAlign: "center",
+                  }}
+                >
+                  ⚠️ Masih ada siswa yang belum diabsen
+                </p>
+              )}
+
+              {/* Warning jika materi belum diisi */}
+              {materiKosong && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <p
+                    style={{
+                      color: "#dc2626",
+                      marginBottom: "0.4rem",
+                      fontWeight: "500",
+                      textAlign: "center",
+                    }}
+                  >
+                    ⚠️ Silahkan isi materi pelajaran terlebih dahulu
+                  </p>
+                  <span
+                    className="btn-back-home"
+                    style={{ backgroundColor: "coral" }}
+                    onClick={() => setMateriModal(true)}
+                  >
+                    {materi == undefined || materi === ""
+                      ? "Tambah Materi ➕"
+                      : "Edit Materi ✍️"}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Tombol submit hanya muncul jika semua terpenuhi */}
+            {!belumDiabsen && !materiKosong && (
               <button
                 type="submit"
                 disabled={submitLoading}

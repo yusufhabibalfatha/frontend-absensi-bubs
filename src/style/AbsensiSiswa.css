@@ -787,3 +787,8 @@ html {
 .keterangan-modal .keterangan-editor {
   animation: modalSlideIn 0.3s ease-out;
 }
+
+.warning-text-absen {
+  display: flex;
+  flex-direction: column;
+}
