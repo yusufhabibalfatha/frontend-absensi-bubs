@@ -2,22 +2,29 @@ import { useEffect, useState } from "react";
 
 function PilihGuru({ setSelectedTeacher, selectedTeacher, selectedSubject }) {
   const [teacher, setTeacher] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const fetchGuru = async () => {
+    setLoading(true);
+    setError(false);
+
     try {
       const url = `${import.meta.env.VITE_NEW_API_URL}/guru_sekolah.php`;
       const res = await fetch(url);
       const data = await res.json();
 
       if (!data.status) {
-        alert("Gagal mengambil data guru sekolah");
+        setError(true);
         return;
       }
 
       setTeacher(data.data);
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan server");
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,20 +37,50 @@ function PilihGuru({ setSelectedTeacher, selectedTeacher, selectedSubject }) {
       <h2>3. Pilih Guru Mata Pelajaran</h2>
 
       {selectedSubject && (
-        <div className="subject-grid">
-          {teacher &&
-            teacher.map((teacherEach) => (
+        <>
+          {loading && (
+            <p className="try">
+              ⏳ Mengambil data guru...
               <button
-                key={teacherEach.id}
-                className={`day-button ${
-                  selectedTeacher === teacherEach ? "selected" : ""
-                } `}
-                onClick={() => setSelectedTeacher(teacherEach)}
+                className="retry-btn"
+                onClick={fetchGuru}
+                style={{ marginLeft: "10px" }}
               >
-                {teacherEach.nama}
+                Retry
               </button>
-            ))}
-        </div>
+            </p>
+          )}
+
+          {error && (
+            <p className="try">
+              ❌ Gagal mengambil data guru
+              <button
+                className="retry-btn"
+                onClick={fetchGuru}
+                style={{ marginLeft: "10px" }}
+              >
+                Coba Lagi
+              </button>
+            </p>
+          )}
+
+          {!loading && !error && (
+            <div className="subject-grid">
+              {teacher &&
+                teacher.map((teacherEach) => (
+                  <button
+                    key={teacherEach.id}
+                    className={`day-button ${
+                      selectedTeacher === teacherEach ? "selected" : ""
+                    }`}
+                    onClick={() => setSelectedTeacher(teacherEach)}
+                  >
+                    {teacherEach.nama}
+                  </button>
+                ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
