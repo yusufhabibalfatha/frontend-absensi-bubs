@@ -30,7 +30,7 @@ export default function Beranda() {
 
         <button
           disabled
-          className="btn btn-disabled"
+          className="btn btn-secondary"
           onClick={() => navigate("/login")}
         >
           Classroom
