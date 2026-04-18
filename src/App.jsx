@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import BerandaLayout from "./layouts/BerandaLayout";
+import GeneralLayout from "./layouts/GeneralLayout";
 import NotFound from "./components/NotFound";
 import Login from "./components/Login";
 import DashboardGuru from "./components/DashboardGuru";
@@ -25,35 +25,35 @@ import "./style/styles.css";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<BerandaLayout />}>
+      <Route path="/" element={<GeneralLayout />}>
         <Route index element={<Beranda />} />
       </Route>
 
-      <Route path="/pilih" element={<BerandaLayout />}>
+      <Route path="/pilih" element={<GeneralLayout />}>
         <Route index element={<PilihMapel />} />
       </Route>
 
-      <Route path="/absen" element={<BerandaLayout />}>
+      <Route path="/absen" element={<GeneralLayout />}>
         <Route index element={<AbsensiSiswa />} />
       </Route>
 
-      <Route path="/kegiatan" element={<BerandaLayout />}>
+      <Route path="/kegiatan" element={<GeneralLayout />}>
         <Route index element={<PilihKegiatan />} />
       </Route>
 
-      <Route path="/kegiatan/kelas" element={<BerandaLayout />}>
+      <Route path="/kegiatan/kelas" element={<GeneralLayout />}>
         <Route index element={<PilihKelas />} />
       </Route>
 
-      <Route path="/kegiatan/kamar" element={<BerandaLayout />}>
+      <Route path="/kegiatan/kamar" element={<GeneralLayout />}>
         <Route index element={<PilihKamar />} />
       </Route>
 
-      <Route path="/kegiatan/absen" element={<BerandaLayout />}>
+      <Route path="/kegiatan/absen" element={<GeneralLayout />}>
         <Route index element={<AbsensiKegiatan />} />
       </Route>
 
-      <Route path="/download-qr" element={<BerandaLayout />}>
+      <Route path="/download-qr" element={<GeneralLayout />}>
         <Route index element={<DownloadQR />} />
       </Route>
 
