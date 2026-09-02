@@ -1,0 +1,247 @@
+.rekap-absensi {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.rekap-header {
+  margin-bottom: 24px;
+}
+
+.rekap-header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+}
+
+.rekap-header p {
+  margin: 0;
+  color: #666;
+}
+
+/* =========================
+   FILTER
+========================= */
+
+.rekap-filter {
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(150px, 1fr))
+    auto;
+
+  gap: 16px;
+  padding: 20px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+
+  margin-bottom: 20px;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.filter-item label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.filter-item input,
+.filter-item select {
+  height: 42px;
+  padding: 0 12px;
+
+  border: 1px solid #d7d7d7;
+  border-radius: 8px;
+
+  background: white;
+  font-size: 14px;
+}
+
+.filter-action {
+  display: flex;
+  align-items: end;
+}
+
+.filter-action button {
+  height: 42px;
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #111;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.filter-action button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.rekap-error {
+  padding: 12px 16px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  margin-bottom: 20px;
+
+  color: #b00020;
+  background: #fff5f5;
+}
+
+/* =========================
+   INFO
+========================= */
+
+.rekap-info {
+  display: flex;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.rekap-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: 16px 20px;
+
+  min-width: 160px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+
+.rekap-info strong {
+  font-size: 13px;
+  color: #666;
+}
+
+.rekap-info span {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.rekap-section {
+  margin-bottom: 28px;
+}
+
+.section-header {
+  margin-bottom: 12px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+
+  min-width: 900px;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  padding: 11px 12px;
+
+  border-bottom: 1px solid #eeeeee;
+
+  text-align: left;
+
+  font-size: 14px;
+}
+
+.table-wrapper th {
+  background: #f7f7f7;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-wrapper tbody tr:hover {
+  background: #fafafa;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty-data {
+  padding: 40px;
+
+  border: 1px dashed #d5d5d5;
+  border-radius: 10px;
+
+  text-align: center;
+
+  color: #777;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+  .rekap-filter {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-action {
+    align-items: stretch;
+  }
+
+  .filter-action button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .rekap-absensi {
+    padding: 16px;
+  }
+
+  .rekap-filter {
+    grid-template-columns: 1fr;
+  }
+
+  .rekap-info {
+    flex-direction: column;
+  }
+}

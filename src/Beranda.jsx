@@ -13,12 +13,13 @@ export default function Beranda() {
         <button className="btn btn-primary" onClick={() => navigate("/pilih")}>
           Absen Sekolah
         </button>
-        <a
+
+        <button
           className="btn btn-secondary"
-          href="https://php.bubstarakan.com/absen-guru"
+          onClick={() => navigate("/rekap")}
         >
-          Absen Guru
-        </a>
+          Rekap Absensi
+        </button>
 
         <button
           disabled
@@ -28,9 +29,16 @@ export default function Beranda() {
           Absen Kegiatan
         </button>
 
+        <a
+          className="btn btn-secondary btn-disabled"
+          href="https://php.bubstarakan.com/absen-guru"
+        >
+          Absen Guru
+        </a>
+
         <button
           disabled
-          className="btn btn-secondary"
+          className="btn btn-secondary btn-disabled"
           onClick={() => navigate("/login")}
         >
           Classroom

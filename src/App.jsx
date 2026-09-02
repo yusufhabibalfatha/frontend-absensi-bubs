@@ -20,6 +20,7 @@ import PilihKelas from "./PilihKelas";
 import PilihKamar from "./PilihKamar";
 import AbsensiKegiatan from "./AbsensiKegiatan";
 import DownloadQR from "./pages/Download-QR";
+import RekapAbsensi from "./components/RekapAbsensi";
 import "./style/styles.css";
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
       <Route path="/absen" element={<GeneralLayout />}>
         <Route index element={<AbsensiSiswa />} />
       </Route>
+
+      <Route path="/rekap" element={<RekapAbsensi />}></Route>
 
       <Route path="/kegiatan" element={<GeneralLayout />}>
         <Route index element={<PilihKegiatan />} />
